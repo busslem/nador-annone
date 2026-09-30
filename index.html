@@ -1,0 +1,306 @@
+﻿<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nador-Annonces</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- 1. BARRE SUPÉRIEURE : TRADUCTION, STATS & AUTHENTIFICATION -->
+
+    <!-- 2. EN-TÊTE PRINCIPAL -->
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-container">
+                <div class="title-row">
+                    <h1 class="brand-title">
+                        <span class="brand-primary">Nador</span><span class="brand-accent">-Annonces</span>
+                        
+                        <!-- Le micro est placé UNIQUEMENT ici (à gauche) -->
+                        <svg class="mic-icon-title" viewBox="0 0 64 64" width="40" height="40" aria-hidden="true">
+                            <defs>
+                                <linearGradient id="gm-title" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0" stop-color="#f59e0b"/>
+                                    <stop offset="1" stop-color="#ef4444"/>
+                                </linearGradient>
+                            </defs>
+                            <circle class="mic-ring r1" cx="32" cy="28" r="14" fill="none" stroke="#60a5fa" stroke-width="2"/>
+                            <circle class="mic-ring r2" cx="32" cy="28" r="14" fill="none" stroke="#60a5fa" stroke-width="2"/>
+                            <rect x="23" y="8" width="18" height="30" rx="9" fill="url(#gm-title)"/>
+                            <path d="M16 30a16 16 0 0 0 32 0M32 46v10M22 56h20" fill="none" stroke="#e2e8f0" stroke-width="3.5" stroke-linecap="round"/>
+                            <path d="M27 16h10M27 22h10M27 28h10" stroke="#fff" stroke-opacity=".55" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </h1>
+                </div>
+                <p class="brand-tagline" data-i18n="tagline">Votre espace incontournable d’annonces et de publicité interactive</p>
+            </div>
+        </div>
+
+        <!-- Bande d'actions -->
+    </header>
+
+    <!-- NOUVELLE BANDE : LANGUES À GAUCHE / ACTIONS À DROITE -->
+    <div class="nouvelle-bande">
+        <!-- Langues à gauche -->
+        <div class="lang-bar">
+            <span>🌐</span>
+            <button onclick="changerLangue('fr')">Français</button>
+            <button onclick="changerLangue('en')">English</button>
+            <button onclick="changerLangue('ar')">العربية</button>
+        </div>
+
+        <!-- Actions à droite -->
+        <div class="actions-bar">
+            <button id="btn-login-user" data-i18n="btn_login" onclick="ouvrirModalUser()">
+                👤Se Connecter
+            </button>
+
+            <button id="btn-ouvrir-depot" data-i18n="btn_publier_top" onclick="ouvrirDepot()">
+                ➕ Publier une annonce
+            </button>
+
+            <span class="visiteurs">
+                👥 <span id="txt-visites">Visiteurs : 0</span>
+            </span>
+
+            <button id="btn-login-admin" data-i18n="btn_admin" onclick="ouvrirModalAdmin()">
+                🔑 Admin
+            </button>
+
+            <span id="label-user-connecte"></span>
+
+            <button id="btn-logout" data-i18n="btn_logout" style="display:none;" onclick="deconnexion()">
+                Déconnexion
+            </button>
+        </div>
+    </div>
+
+    <!-- 3. BANDE FLASH ROULANTE -->
+    <section class="flash-section">
+        <div class="flash-label" data-i18n="flash_title">⚡ Fash </div>
+        <div class="marquee-container">
+            <div class="marquee-content" id="bande-flash"></div>
+        </div>
+        <button id="btn-gerer-flash" style="display:none;" onclick="ouvrirGestionFlash()">⚙️ Gérer Flash</button>
+    </section>
+
+    <!-- 4. BANDE DES CATÉGORIES (Placée juste en dessous de la bande flash)-->
+    <nav class="categories-bar" aria-label="Catégories">
+        <div class="categories-container">
+            <button type="button" class="categorie-btn active" data-categorie="toutes" aria-pressed="true">🏠 Toutes</button>
+            <button type="button" class="categorie-btn" data-categorie="Immobilier" aria-pressed="false">🏠 Immobilier</button>
+            <button type="button" class="categorie-btn" data-categorie="Véhicules" aria-pressed="false">🚗 Véhicules</button>
+            <button type="button" class="categorie-btn" data-categorie="Emploi" aria-pressed="false">💼 Emploi</button>
+            <button type="button" class="categorie-btn" data-categorie="Commerce" aria-pressed="false">🛒 Commerce</button>
+            <button type="button" class="categorie-btn" data-categorie="Services" aria-pressed="false">🛠️ Services</button>
+            <button type="button" class="categorie-btn" data-categorie="Formation" aria-pressed="false">🎓 Formation</button>
+            <button type="button" class="categorie-btn" data-categorie="Téléphones et informatique" aria-pressed="false">💻 Téléphones et informatique</button>
+            <button type="button" class="categorie-btn" data-categorie="Infos pratiques" aria-pressed="false">ℹ️ Infos pratiques</button>
+            <button type="button" class="categorie-btn" data-categorie="Autres" aria-pressed="false">📢 Autres</button>
+
+            <!-- Bouton Rechercher (à droite de « Autres ») -->
+            <button type="button" class="btn-rechercher-cat" id="btn-rechercher" data-i18n="btn_rechercher" aria-controls="recherche-bar" aria-expanded="false">🔍 Rechercher</button>
+
+            <!-- Icône pour actualiser la page -->
+            <button type="button" class="btn-actualiser" id="btn-actualiser" title="Actualiser la page" aria-label="Actualiser la page">🔄</button>
+
+        </div>
+    </nav>
+
+    <!-- BARRE DE RECHERCHE (s'ouvre avec le bouton Rechercher) -->
+    <div class="recherche-bar" id="recherche-bar" hidden>
+        <div class="recherche-container">
+            <input type="search" id="champ-recherche" placeholder="Rechercher une annonce (titre, description, ville, catégorie)..." autocomplete="off" aria-label="Rechercher une annonce">
+            <button type="button" id="btn-effacer-recherche" style="display:none;" aria-label="Effacer la recherche">&times;</button>
+        </div>
+    </div>
+
+    <!-- 5. CONTENU PRINCIPAL DU SITE -->
+    <main class="container">
+        <section class="card-section">
+            <h2 data-i18n="annonces_titre">🛒 Annonces récentes</h2>
+            <p id="msg-traduction" class="msg-traduction" hidden></p>
+            <div id="grille-annonces" class="annonces-grid"></div>
+        </section>
+    </main>
+
+    <!-- 6. MODALES INTERACTIVES -->
+
+    <!-- Détail Annonce -->
+    <dialog id="modal-detail-annonce">
+        <div class="modal-content">
+            <span class="close-btn" onclick="fermerModal('modal-detail-annonce')">&times;</span>
+            <div id="contenu-detail-annonce"></div>
+        </div>
+    </dialog>
+
+    <!-- Détail Flash Info -->
+    <dialog id="modal-detail-flash">
+        <div class="modal-content">
+            <span class="close-btn" onclick="fermerModal('modal-detail-flash')">&times;</span>
+            <div id="contenu-detail-flash"></div>
+        </div>
+    </dialog>
+
+    <!-- Connexion Administrateur -->
+    <dialog id="modal-admin">
+        <div class="modal-content">
+            <span class="close-btn" onclick="fermerModal('modal-admin')">&times;</span>
+            <h3>Connexion Administrateur</h3>
+            <form id="form-admin-login">
+                <div class="form-group">
+                    <label>Mot de passe Admin</label>
+                    <input type="password" id="admin-pass" required>
+                </div>
+                <button type="submit" class="btn">Se connecter</button>
+            </form>
+        </div>
+    </dialog>
+
+    <!-- Connexion / Inscription Utilisateur -->
+    <dialog id="modal-user">
+        <div class="modal-content">
+            <span class="close-btn" onclick="fermerModal('modal-user')">&times;</span>
+            <h3 id="titre-user-modal">Connexion Annonceur</h3>
+            <form id="form-user-auth">
+                <div class="form-group" id="grp-user-nom" style="display:none;">
+                    <label>Nom complet</label>
+                    <input type="text" id="u-nom">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="u-email" required>
+                </div>
+                <div class="form-group">
+                    <label>Mot de passe</label>
+                    <input type="password" id="u-mdp" required>
+                </div>
+                <button type="submit" class="btn" id="btn-valider-user">Se connecter</button>
+            </form>
+            <p style="margin-top:10px; cursor:pointer; color:blue;" id="btn-toggle-auth" onclick="basculerModeUser()">Pas de compte ? S'inscrire</p>
+        </div>
+    </dialog>
+
+    <!-- Gestion Flash Info (Admin) -->
+    <dialog id="modal-gerer-flash">
+        <div class="modal-content">
+            <span class="close-btn" onclick="fermerModal('modal-gerer-flash')">&times;</span>
+            <h3 id="titre-gerer-flash">Ajouter un Flash Info (Admin)</h3>
+            <form id="form-ajouter-flash">
+                <div class="form-group">
+                    <label>Titre court (défilement) *</label>
+                    <input type="text" id="f-titre" required>
+                </div>
+                <div class="form-group">
+                    <label>Texte / description (facultatif)</label>
+                    <textarea id="f-contenu" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Photos / vidéos (glisser ou parcourir)</label>
+                    <div class="drop-zone" id="drop-flash">
+                        <p>📁 Glissez vos photos/vidéos ici ou <u>parcourez</u></p>
+                        <input type="file" id="f-fichiers" multiple accept="image/*,video/*" style="display:none;">
+                    </div>
+                    <div id="apercu-flash" class="preview-grid"></div>
+                </div>
+                <div class="etape-actions">
+                    <button type="submit" class="btn" id="btn-valider-flash">Ajouter au Flash</button>
+                    <button type="button" class="btn btn-secondary" id="btn-annuler-flash" style="display:none;" onclick="annulerEditionFlash()">Annuler</button>
+                </div>
+            </form>
+            <hr style="margin:20px 0;">
+            <h4>Liste des Flashs actuels (modifier / supprimer)</h4>
+            <div id="liste-flashs-admin"></div>
+        </div>
+    </dialog>
+
+    <!-- Déposer une annonce (2 étapes) -->
+    <dialog id="modal-deposer">
+        <div class="modal-content">
+            <span class="close-btn" onclick="fermerModal('modal-deposer')">&times;</span>
+            <h3 data-i18n="deposer_titre">📢 Déposer une annonce</h3>
+            <p class="etape-indic" id="dep-indic">1 / 2</p>
+            <div class="info-compte" id="dep-info-compte"></div>
+
+            <form id="form-deposer" novalidate>
+                <!-- Étape 1 : informations -->
+                <div class="etape" id="dep-etape1">
+                    <div class="form-group">
+                        <label data-i18n="lbl_titre">Titre de l'annonce *</label>
+                        <input type="text" id="dep-titre" maxlength="100" required>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="lbl_cat">Catégorie *</label>
+                        <select id="dep-categorie" required>
+                            <option value="">— Choisir —</option>
+                            <option>Immobilier</option>
+                            <option>Véhicules</option>
+                            <option>Emploi</option>
+                            <option>Commerce</option>
+                            <option>Services</option>
+                            <option>Formation</option>
+                            <option>Téléphones et informatique</option>
+                            <option>Infos pratiques</option>
+                            <option>Autres</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="lbl_ville">Ville *</label>
+                        <select id="dep-ville" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="lbl_prix">Prix (Optionnel)</label>
+                        <input type="number" id="dep-prix" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="lbl_desc">Description courte *</label>
+                        <textarea id="dep-description" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="lbl_tel">Téléphone *</label>
+                        <input type="tel" id="dep-telephone" required pattern="[0-9+ ]{8,16}" placeholder="0612345678">
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="lbl_loc">Localisation (Google Maps, Waze…) — facultatif</label>
+                        <input type="text" id="dep-localisation" maxlength="300" placeholder="Lien Google Maps / Waze, ou adresse, ou coordonnées">
+                        <p class="petit-info">Astuce : dans Google Maps ou Waze, touchez « Partager » puis « Copier le lien », et collez-le ici. Vous pouvez aussi écrire l'adresse ou les coordonnées (ex : 35.1681, -2.9335).</p>
+                    </div>
+                    <button type="button" class="btn" id="dep-suivant" data-i18n="btn_suivant" style="width:100%;">Suivant ➔</button>
+                </div>
+
+                <!-- Étape 2 : médias + publication -->
+                <div class="etape" id="dep-etape2" hidden>
+                    <div class="form-group">
+                        <label data-i18n="lbl_medias">Glissez ou sélectionnez vos fichiers (Photos, Vidéos)</label>
+                        <p class="petit-info">5 photos max · vidéos 2 Mo max · facultatif</p>
+                        <div class="drop-zone" id="dep-drop">
+                            <p>📁 Glissez vos photos/vidéos ici ou <u>parcourez</u></p>
+                            <input type="file" id="dep-fichiers" multiple accept="image/*,video/*" style="display:none;">
+                        </div>
+                        <div id="dep-apercu" class="preview-grid"></div>
+                    </div>
+                    <div class="etape-actions">
+                        <button type="button" class="btn btn-secondary" id="dep-retour" data-i18n="btn_retour">⬅️ Retour</button>
+                        <button type="submit" class="btn btn-publier" id="dep-publier" data-i18n="btn_publier">Publier l'annonce</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </dialog>
+
+    <!-- Agrandissement d'une photo (depuis les détails d'une annonce) -->
+    <dialog id="modal-zoom">
+        <button type="button" class="zoom-close" onclick="fermerZoom()" aria-label="Fermer">&times;</button>
+        <button type="button" class="zoom-nav zoom-prev" onclick="changerZoom(-1)" aria-label="Photo précédente">&#8249;</button>
+        <div id="zoom-contenu"></div>
+        <button type="button" class="zoom-nav zoom-next" onclick="changerZoom(1)" aria-label="Photo suivante">&#8250;</button>
+        <p id="zoom-compteur"></p>
+    </dialog>
+
+    <script src="media.js"></script>
+    <script src="script.js"></script>
+
+</body>
+</html>

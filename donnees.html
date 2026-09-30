@@ -1,0 +1,131 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sauvegarde et récupération - Nador Annonces</title>
+    <style>
+        body { margin:0; font-family:Arial,sans-serif; background:#f2f2f2; }
+        header { background:#1976d2; color:#fff; text-align:center; padding:18px; }
+        header h1 { margin:0; font-size:22px; }
+        main { max-width:720px; margin:20px auto; width:92%; }
+        section { background:#fff; border-radius:8px; padding:18px; margin-bottom:16px; }
+        h2 { margin:0 0 10px; font-size:17px; color:#1976d2; }
+        table { width:100%; border-collapse:collapse; font-size:14px; }
+        td, th { text-align:left; padding:7px 6px; border-bottom:1px solid #eee; vertical-align:middle; }
+        button, .btn { background:#1976d2; color:#fff; border:none; border-radius:5px; padding:9px 14px; cursor:pointer; font-size:14px; }
+        button.vert { background:#2e7d32; }
+        .petit { font-size:12px; color:#666; }
+        a.retour { display:block; text-align:center; color:#1976d2; margin:10px 0 30px; text-decoration:none; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>💾 Sauvegarde et récupération des données</h1>
+    </header>
+
+    <main>
+        <section>
+            <h2>Données enregistrées dans ce navigateur</h2>
+            <p class="petit" id="origine"></p>
+            <table id="tableau"></table>
+            <p class="petit">Si vos anciennes annonces n'apparaissent pas ici, elles sont enregistrées ailleurs : ouvrez le site exactement comme avant (même dossier ou même URL) pour les exporter.</p>
+        </section>
+
+        <section>
+            <h2>Sauvegarder</h2>
+            <p class="petit">Télécharge un fichier JSON contenant l'ensemble de vos annonces, utilisateurs et fil Flash avec visuels.</p>
+            <button class="vert" id="sauver" type="button">⬇️ Télécharger une sauvegarde</button>
+        </section>
+
+        <section>
+            <h2>Restaurer</h2>
+            <p class="petit">Sélectionnez un fichier de sauvegarde (.json). Les données seront fusionnées sans créer de doublons.</p>
+            <input type="file" id="fichier" accept=".json,application/json">
+        </section>
+    </main>
+
+    <a class="retour" href="index.html">← Retour au site</a>
+
+    <script>
+        const lireBrut = k => { 
+            try { 
+                return JSON.parse(localStorage.getItem(k)); 
+            } catch (e) { 
+                return null; 
+            } 
+        };
+        const estAnnonces = v => Array.isArray(v) && v.length > 0 && v.every(x => x && typeof x === "object" && ("titre" in x));
+        
+        document.getElementById("origine").textContent = "Adresse actuelle : " + location.origin + location.pathname.replace(/[^/]*$/, "");
+
+        function fusionner(cible, nouvelles) {
+            const anc = (lireBrut(cible) || []).filter(x => x && typeof x === "object");
+            const cles = new Set(anc.map(a => a.id || (a.titre + "|" + a.telephone + "|" + a.description)));
+            nouvelles.forEach((a, i) => {
+                const cle = a.id || (a.titre + "|" + a.telephone + "|" + a.description);
+                if (!cles.has(cle)) { 
+                    if (!a.id) a.id = "a" + Date.now() + "r" + i; 
+                    anc.push(a); 
+                    cles.add(cle); 
+                }
+            });
+            localStorage.setItem(cible, JSON.stringify(anc));
+        }
+
+        function dessiner() {
+            const t = document.getElementById("tableau");
+            t.innerHTML = "<tr><th>Clé</th><th>Contenu</th><th>Action</th></tr>";
+            const cles = Object.keys(localStorage);
+            if (!cles.length) { 
+                t.innerHTML += "<tr><td colspan='3'>Aucune donnée dans ce navigateur.</td></tr>"; 
+                return; 
+            }
+            cles.forEach(k => {
+                const v = lireBrut(k), taille = Math.round((localStorage.getItem(k) || "").length / 1024);
+                const desc = Array.isArray(v) ? v.length + " élément(s)" : "Valeur simple";
+                const tr = document.createElement("tr");
+                tr.innerHTML = `<td><b>${k.replace(/[<>&]/g, "")}</b></td><td>${desc} — ~${taille} Ko</td><td></td>`;
+                if (k !== "annonces" && estAnnonces(v)) {
+                    const b = document.createElement("button");
+                    b.textContent = "Importer comme annonces";
+                    b.onclick = () => { fusionner("annonces", v); alert("Annonces importées !"); dessiner(); };
+                    tr.lastChild.appendChild(b);
+                }
+                t.appendChild(tr);
+            });
+        }
+        dessiner();
+
+        document.getElementById("sauver").onclick = () => {
+            const tout = {};
+            Object.keys(localStorage).forEach(k => tout[k] = localStorage.getItem(k));
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(new Blob([JSON.stringify(tout, null, 2)], { type: "application/json" }));
+            a.download = "sauvegarde-nador-annonces.json";
+            a.click();
+        };
+
+        document.getElementById("fichier").onchange = async e => {
+            if (!e.target.files.length) return;
+            try {
+                const donnees = JSON.parse(await e.target.files[0].text());
+                let n = 0;
+                Object.keys(donnees).forEach(k => {
+                    let v; 
+                    try { v = JSON.parse(donnees[k]); } catch (x) { v = donnees[k]; }
+                    if (Array.isArray(v) && ["annonces", "utilisateurs", "flashs"].includes(k)) { 
+                        fusionner(k, v); 
+                        n += v.length; 
+                    }
+                });
+                alert("Restauration réussie ! (" + n + " éléments traités)");
+                dessiner();
+            } catch (err) { 
+                alert("Format invalide : " + err.message); 
+            }
+        };
+    </script>
+</body>
+</html>

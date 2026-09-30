@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Déposer une annonce - Nador-Annonces&Pub</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .page-depot { max-width: 680px; margin: 25px auto; width: 92%; }
+        .page-depot textarea { min-height: 180px; resize: vertical; }
+        .page-depot .req { color: #d32f2f; }
+        .info-compte { background: #eff6ff; border: 1px solid #bfdbfe; padding: 10px 14px; border-radius: 6px; margin-bottom: 15px; font-size: 14px; }
+        .retour { display: block; text-align: center; margin: 15px 0 30px; color: #2563eb; text-decoration: none; }
+        .btn-publier { width: 100%; margin-top: 10px; padding: 14px; font-size: 16px; background: #16a34a; }
+    </style>
+</head>
+<body>
+
+    <header class="main-header page-header">
+        <h1 class="brand-title">
+            <span class="brand-primary" id="titre-page">➕ Déposer une annonce</span>
+        </h1>
+    </header>
+
+    <main class="page-depot card-section">
+        <div class="info-compte" id="info-compte"></div>
+
+        <form id="form-depot">
+            <div class="form-group">
+                <label>Titre <span class="req">*</span></label>
+                <input type="text" id="d-titre" required maxlength="100">
+            </div>
+
+            <div class="form-group">
+                <label>Catégorie <span class="req">*</span></label>
+                <select id="d-categorie" required>
+                    <option value="">— Choisir —</option>
+                    <option>Immobilier</option>
+                    <option>Véhicules</option>
+                    <option>Emploi</option>
+                    <option>Commerce</option>
+                    <option>Services</option>
+                    <option>Formation</option>
+                    <option>Téléphones et informatique</option>
+                    <option>Infos pratiques</option>
+                    <option>Autres</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Ville <span class="req">*</span></label>
+                <select id="d-ville" required></select>
+            </div>
+
+            <div class="form-group">
+                <label>Prix (DH) — facultatif</label>
+                <input type="number" id="d-prix" min="0">
+            </div>
+
+            <div class="form-group">
+                <label>Description <span class="req">*</span></label>
+                <textarea id="d-description" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Téléphone <span class="req">*</span></label>
+                <input type="tel" id="d-telephone" required pattern="[0-9+ ]{8,16}" placeholder="0612345678">
+            </div>
+
+            <div class="form-group">
+                <label>Photos (5 max) et vidéos (2 Mo max) — facultatif</label>
+                <div class="drop-zone" id="drop-zone">
+                    <p>📁 Glissez vos photos/vidéos ici ou <u>parcourez</u></p>
+                    <input type="file" id="d-fichiers" multiple accept="image/*,video/*" style="display:none;">
+                </div>
+                <div id="apercu-fichiers" class="preview-grid"></div>
+            </div>
+
+            <button type="submit" class="btn btn-publier" id="btn-pub">Publier l'annonce</button>
+        </form>
+
+        <a class="retour" href="index.html">← Retour aux annonces</a>
+    </main>
+
+    <script src="media.js"></script>
+    <script src="deposer.js"></script>
+</body>
+</html>
