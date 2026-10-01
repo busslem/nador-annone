@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr" dir="ltr">
 <head>
     <meta charset="UTF-8">
@@ -151,6 +151,10 @@
             <h3>Connexion Administrateur</h3>
             <form id="form-admin-login">
                 <div class="form-group">
+                    <label>Email Admin</label>
+                    <input type="email" id="admin-email" value="admin@nador-annonce.com" required>
+                </div>
+                <div class="form-group">
                     <label>Mot de passe Admin</label>
                     <input type="password" id="admin-pass" required>
                 </div>
@@ -299,8 +303,10 @@
         <p id="zoom-compteur"></p>
     </dialog>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
     <script src="media.js"></script>
     <script src="script.js"></script>
+    <script src="supabase-data.js"></script>
 
 </body>
 </html>
