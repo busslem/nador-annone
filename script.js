@@ -1,6 +1,5 @@
-/* ===== Nador-Annonces&Pub : script unifié ===== */
+﻿/* ===== Nador-Annonces&Pub : script unifié ===== */
 
-const MDP_ADMIN = "admin123"; 
 const $ = id => document.getElementById(id);
 const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const lire = (k, def) => { try { return JSON.parse(localStorage.getItem(k)) ?? def; } catch (e) { return def; } };
@@ -20,9 +19,9 @@ let sousCategorieActive = null;
 /* ===== RÉGLAGES FACILES À MODIFIER ===== */
 const VITESSE_FLASH = 40;   // vitesse de la bande Flash en pixels par seconde (plus petit = plus lent)
 const CONTACT = {           // coordonnées affichées dans « Nous contacter » (laissez "" pour masquer un moyen)
-    whatsapp: "",           // ex : "0612345678"
-    telephone: "",          // ex : "0536000000"
-    email: ""               // ex : "contact@votre-site.com"
+    whatsapp: "0646938002",
+    telephone: "+212646938002",
+    email: "nadorannoncepub@gmail.com"
 };
 const VILLE_INFO = { lat: 35.1681, lon: -2.9335 };   // Nador : position pour la météo et les horaires de prière
 
@@ -183,6 +182,7 @@ ajoutTrad("info_vent", "Vent", "Wind", "الرياح");
 ajoutTrad("info_maj", "Mis à jour le", "Updated on", "آخر تحديث");
 ajoutTrad("info_aucune", "Aucune information enregistrée pour le moment. Consultez les sites officiels ci-dessous.", "Nothing saved yet. See the official sites below.", "لا توجد معلومات مسجلة حاليا. راجع المواقع الرسمية أدناه.");
 ajoutTrad("info_modifier", "✏️ Mettre à jour", "✏️ Update", "✏️ تحديث");
+ajoutTrad("info_sites", "Sites officiels marocains", "Official Moroccan websites", "مواقع مغربية رسمية");
 ajoutTrad("num_police", "Police", "Police", "الشرطة");
 ajoutTrad("num_gendarmerie", "Gendarmerie Royale", "Royal Gendarmerie", "الدرك الملكي");
 ajoutTrad("num_pompiers", "Protection civile (pompiers)", "Civil protection (fire brigade)", "الوقاية المدنية (المطافئ)");
@@ -401,19 +401,6 @@ function appliquerTraductions(racine) {
 function fermerModal(id) { $(id).close(); }
 function ouvrirModalAdmin() { $("modal-admin").showModal(); }
 function ouvrirModalUser() { $("modal-user").showModal(); }
-
-$("form-admin-login").addEventListener("submit", e => {
-    e.preventDefault();
-    if ($("admin-pass").value === MDP_ADMIN) {
-        estAdmin = true; 
-        utilisateurConnecte = { email: "admin@system", nom: "Administrateur" };
-        sessionStorage.setItem("admin", "true"); 
-        localStorage.setItem("session", JSON.stringify(utilisateurConnecte));
-        $("admin-pass").value = ""; 
-        fermerModal("modal-admin"); 
-        majUI();
-    } else alert("Mot de passe incorrect !");
-});
 
 function basculerModeUser() {
     modeInscription = !modeInscription;
@@ -733,7 +720,7 @@ const SOUS_CATS = {
     "services": [["Bâtiment et travaux", "Construction & works", "بناء وأشغال"], ["Transport et déménagement", "Transport & moving", "نقل وترحيل"], ["Santé et beauté", "Health & beauty", "صحة وجمال"], ["Réparation", "Repairs", "إصلاح"], ["Événements", "Events", "مناسبات"]],
     "formation": [["Cours particuliers", "Private lessons", "دروس خصوصية"], ["Langues", "Languages", "لغات"], ["Informatique", "Computing", "إعلاميات"], ["Formation professionnelle", "Vocational training", "تكوين مهني"]],
     "telephones et informatique": [["Téléphones", "Phones", "هواتف"], ["Ordinateurs", "Computers", "حواسيب"], ["Tablettes", "Tablets", "لوحات إلكترونية"], ["Accessoires", "Accessories", "ملحقات"], ["Réparation", "Repairs", "إصلاح"]],
-    "infos pratiques": [["Horaires de prière", "Prayer times", "أوقات الصلاة"], ["Trains", "Trains", "القطارات"], ["Pharmacies de garde", "On-duty pharmacies", "الصيدليات المداومة"], ["Météo", "Weather", "الطقس"], ["Numéros utiles", "Useful numbers", "أرقام مفيدة"]]
+    "infos pratiques": [["Horaires de prière", "Prayer times", "أوقات الصلاة"], ["Trains", "Trains", "القطارات"], ["Pharmacies de garde", "On-duty pharmacies", "الصيدليات المداومة"], ["Météo", "Weather", "الطقس"], ["Numéros utiles", "Useful numbers", "أرقام مفيدة"], ["Sites officiels", "Official websites", "مواقع رسمية"]]
 };
 
 const idxLangue = () => ({ fr: 0, en: 1, ar: 2 }[langueActuelle] ?? 0);
@@ -1379,6 +1366,68 @@ const LIENS_INFOS = {
     pharmacies: [["💊 med.ma", "https://www.med.ma/pharmacie/garde-24-24/nador"], ["📋 annuaire-gratuit.ma", "https://www.annuaire-gratuit.ma/pharmacie-garde-nador.html"]]
 };
 
+/* ---------- Sites officiels marocains (saisie manuelle) ----------
+   Pour ajouter un site : copiez une ligne  ["Nom", "https://adresse", "description FR", "description EN", "description AR"]
+   dans le bon groupe (ou créez un nouveau groupe : ["icône", "FR", "EN", "AR", [ ...sites... ]]). */
+const SITES_MAROC = [
+    ["🏛️", "Administration et papiers", "Administration & documents", "الإدارة والوثائق", [
+        ["Service-public.ma", "https://www.service-public.ma", "Portail national des démarches administratives", "National portal for administrative procedures", "البوابة الوطنية للمساطر والخدمات الإدارية"],
+        ["Idarati", "https://www.idarati.ma", "Démarches et services en ligne de l'administration", "Online administrative services", "خدمات ومساطر الإدارة عن بعد"],
+        ["CNIE", "https://www.cnie.ma", "Carte nationale d'identité électronique : demande et rendez-vous", "National ID card: application and appointments", "البطاقة الوطنية للتعريف الإلكترونية: الطلب والمواعيد"],
+        ["Passeport", "https://www.passeport.ma", "Demande de passeport et prise de rendez-vous", "Passport application and appointments", "طلب جواز السفر وحجز الموعد"],
+        ["Casier judiciaire", "https://www.casierjudiciaire.gov.ma", "Extrait de casier judiciaire en ligne", "Criminal record extract online", "السجل العدلي عن بعد"],
+        ["Watiqa", "https://www.watiqa.ma", "Actes d'état civil (naissance, mariage…)", "Civil status records (birth, marriage…)", "وثائق الحالة المدنية (عقد الازدياد، الزواج…)"]
+    ]],
+    ["🚆", "Transport et voyage", "Transport & travel", "النقل والسفر", [
+        ["ONCF", "https://www.oncf-voyages.ma", "Trains : horaires et réservation", "Trains: timetables and booking", "القطارات: الأوقات والحجز"],
+        ["CTM", "https://www.ctm.ma", "Autocars : horaires et billets", "Coaches: timetables and tickets", "الحافلات: الأوقات والتذاكر"],
+        ["Royal Air Maroc", "https://www.royalairmaroc.com", "Vols nationaux et internationaux", "Domestic and international flights", "الرحلات الوطنية والدولية"],
+        ["ONDA", "https://www.onda.ma", "Aéroports du Maroc (dont Nador – Al Aroui)", "Moroccan airports (incl. Nador – Al Aroui)", "مطارات المغرب (ومنها الناظور – العروي)"],
+        ["ANP", "https://www.anp.org.ma", "Agence nationale des ports (Nador, Béni Ansar)", "National ports agency (Nador, Beni Ansar)", "الوكالة الوطنية للموانئ (الناظور، بني أنصار)"],
+        ["NARSA", "https://www.narsa.ma", "Permis, carte grise, amendes routières", "Driving licence, vehicle registration, fines", "رخصة السياقة، البطاقة الرمادية، المخالفات"]
+    ]],
+    ["💰", "Impôts, douane et foncier", "Taxes, customs & land registry", "الضرائب والجمارك والعقار", [
+        ["DGI (impôts)", "https://www.tax.gov.ma", "Déclarations, paiements et attestations fiscales", "Tax returns, payments and certificates", "التصاريح والأداءات والشهادات الضريبية"],
+        ["Douane (ADII)", "https://www.douane.gov.ma", "Réglementation douanière, import/export, voyageurs", "Customs rules, import/export, travellers", "المساطر الجمركية، الاستيراد والتصدير، المسافرون"],
+        ["ANCFCC", "https://www.ancfcc.gov.ma", "Conservation foncière, titres fonciers, cadastre", "Land registry, titles, cadastre", "المحافظة العقارية والرسوم العقارية والمسح العقاري"]
+    ]],
+    ["⚖️", "Justice", "Justice", "العدالة", [
+        ["Mahakim", "https://www.mahakim.ma", "Suivi des dossiers et affaires judiciaires", "Court case tracking", "تتبع القضايا والملفات القضائية"],
+        ["Ministère de la Justice", "https://www.justice.gov.ma", "Informations et services judiciaires", "Information and judicial services", "معلومات وخدمات قضائية"]
+    ]],
+    ["🩺", "Santé et protection sociale", "Health & social security", "الصحة والحماية الاجتماعية", [
+        ["CNSS", "https://www.cnss.ma", "Sécurité sociale, AMO, allocations familiales", "Social security, AMO health cover, family allowances", "الضمان الاجتماعي، التأمين الإجباري عن المرض، التعويضات العائلية"],
+        ["CNOPS", "https://www.cnops.org.ma", "Assurance maladie des fonctionnaires", "Health insurance for civil servants", "التأمين الصحي لموظفي القطاع العام"],
+        ["Ministère de la Santé", "https://www.sante.gov.ma", "Hôpitaux, vaccination, informations de santé", "Hospitals, vaccination, health information", "المستشفيات، التلقيح، معلومات صحية"]
+    ]],
+    ["💼", "Emploi et formation", "Jobs & training", "الشغل والتكوين", [
+        ["ANAPEC", "https://www.anapec.org", "Offres d'emploi et inscription demandeur d'emploi", "Job offers and job-seeker registration", "عروض الشغل والتسجيل كباحث عن عمل"],
+        ["Emploi-public.ma", "https://www.emploi-public.ma", "Concours et recrutements dans la fonction publique", "Public-sector exams and recruitment", "مباريات وتوظيف الوظيفة العمومية"],
+        ["OFPPT", "https://www.ofppt.ma", "Formation professionnelle : inscriptions et filières", "Vocational training: enrolment and programmes", "التكوين المهني: التسجيل والمسالك"],
+        ["Université Mohammed Ier", "https://www.ump.ma", "Université de la région (Oujda, Nador)", "Regional university (Oujda, Nador)", "جامعة محمد الأول (وجدة، الناظور)"],
+        ["Massar", "https://massar.men.gov.ma", "Espace parents et élèves (scolarité)", "Parents' and pupils' school portal", "فضاء أولياء الأمور والتلاميذ"]
+    ]],
+    ["💡", "Eau, électricité, poste et télécom", "Utilities, post & telecom", "الماء والكهرباء والبريد والاتصالات", [
+        ["ONEE", "https://www.onee.ma", "Électricité et eau potable : factures et services", "Electricity and water: bills and services", "الكهرباء والماء الصالح للشرب: الفواتير والخدمات"],
+        ["Barid Al-Maghrib", "https://www.poste.ma", "Poste : suivi de colis, services financiers", "Post: parcel tracking, financial services", "البريد: تتبع الطرود والخدمات المالية"],
+        ["Maroc Telecom", "https://www.iam.ma", "Téléphonie, internet et factures", "Phone, internet and bills", "الهاتف والإنترنت والفواتير"],
+        ["Orange Maroc", "https://www.orange.ma", "Téléphonie, internet et factures", "Phone, internet and bills", "الهاتف والإنترنت والفواتير"],
+        ["inwi", "https://www.inwi.ma", "Téléphonie, internet et factures", "Phone, internet and bills", "الهاتف والإنترنت والفواتير"]
+    ]],
+    ["🌍", "Marocains du monde", "Moroccans abroad", "مغاربة العالم", [
+        ["Marocains du monde", "https://www.marocainsdumonde.gov.ma", "Services et informations pour les MRE", "Services and information for Moroccans abroad", "خدمات ومعلومات لمغاربة العالم"]
+    ]]
+];
+
+function blocSites() {
+    const l = idxLangue();
+    return SITES_MAROC.map(([ic, ...reste], i) => {
+        const noms = reste.slice(0, 3), sites = reste[3];
+        const lis = sites.map(s => `<li style="display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:6px 0"><a class="btn btn-loc" href="${esc(s[1])}" target="_blank" rel="noopener">${esc(s[0])}</a><small>${esc(s[2 + l])}</small></li>`).join("");
+        return `<details class="sites-groupe"${i === 0 ? " open" : ""} style="margin:6px 0"><summary style="cursor:pointer;font-weight:600">${ic} ${esc(noms[l])}</summary><ul style="list-style:none;padding:0;margin:4px 0 0">${lis}</ul></details>`;
+    }).join("");
+}
+
 /* [codes météo, icône, français, anglais, arabe] */
 const METEO = [
     [[0], "☀️", "Ciel dégagé", "Clear sky", "سماء صافية"],
@@ -1490,7 +1539,8 @@ function afficherInfosPratiques() {
         (veut("Météo") ? carte("info-meteo", "🌤️ " + esc(t("info_meteo")), attente) : "") +
         (veut("Trains") ? carte("info-trains", "🚆 " + esc(t("info_trains")), blocTexteInfo("trains")) : "") +
         (veut("Pharmacies de garde") ? carte("info-pharmacies", "💊 " + esc(t("info_pharmacies")), blocTexteInfo("pharmacies")) : "") +
-        (veut("Numéros utiles") ? carte("info-numeros", "☎️ " + esc(t("info_numeros")), blocNumeros()) : "") + `</div>`;
+        (veut("Numéros utiles") ? carte("info-numeros", "☎️ " + esc(t("info_numeros")), blocNumeros()) : "") +
+        (veut("Sites officiels") ? `<div class="info-carte" id="info-sites" style="grid-column:1/-1"><h3>🔗 ${esc(t("info_sites"))}</h3><div class="info-corps">${blocSites()}</div></div>` : "") + `</div>`;
     majPriere();
     majMeteo();
     minuteurInfos = setInterval(() => { majPriere(); majMeteo(); }, 60000);   // l'heure de la « prochaine prière » et la météo se mettent à jour seules
