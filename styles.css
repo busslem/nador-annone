@@ -1,4 +1,4 @@
-﻿* { 
+* { 
     box-sizing: border-box; 
     margin: 0; 
     padding: 0; 
@@ -1077,3 +1077,231 @@ dialog::backdrop {
 }
 
 .flash-texte { display: block; }
+
+/* =====================================================================
+   NOUVEAUTÉS : bande Flash en boucle, catégories claires + flèches,
+   page de détail plein écran, infos pratiques, contact, localisation
+   ===================================================================== */
+
+/* ===== 1. Bande Flash : boucle continue et lente (la vitesse se règle dans script.js : VITESSE_FLASH) ===== */
+.marquee-container { direction: ltr; }
+.marquee-content {
+    animation: defilement-boucle 60s linear infinite;   /* la durée réelle est calculée par script.js */
+    width: max-content;
+}
+.marquee-unite { display: flex; align-items: center; flex-shrink: 0; }
+.marquee-item { unicode-bidi: plaintext; }
+.marquee-item.flash-prioritaire .flash-texte { font-weight: 700; }
+@keyframes defilement-boucle {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) { .marquee-content { animation-duration: 240s !important; } }
+
+/* ===== 2 + 9. Bouton « Nous contacter » et icône Admin (admin seulement) ===== */
+#btn-contact {
+    background: #0ea5e9;
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+#btn-contact:hover { background: #0284c7; }
+#btn-admin-panel {
+    background: #7c3aed;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+.contact-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+.contact-actions .btn { text-align: center; }
+
+/* ===== 3. Catégories : boutons clairs, texte gris foncé, flèche pour les sous-catégories ===== */
+.categorie-btn {
+    background: #e2e8f0;
+    color: #1f2937;
+    border: 1px solid #cbd5e1;
+}
+.categorie-btn:hover { background: #f8fafc; color: #111827; border-color: #2563eb; }
+.categorie-btn.active,
+.categorie-btn.active:hover {
+    color: #fff;
+    background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+    border-color: transparent;
+}
+.cat-count { display: none; }
+
+.cat-arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-inline-start: 0.5em;
+    width: 1.7em;
+    height: 1.7em;
+    border-radius: 50%;
+    background: rgba(15, 23, 42, 0.14);
+    color: #1f2937;
+    font-size: 0.95em;
+    line-height: 1;
+    vertical-align: middle;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+.cat-arrow:hover { background: #2563eb; color: #fff; }
+.cat-arrow.ouvert { transform: rotate(180deg); background: #2563eb; color: #fff; }
+.categorie-btn.active .cat-arrow { background: rgba(255, 255, 255, 0.3); color: #fff; }
+
+.souscat-menu {
+    position: fixed;
+    z-index: 1000;
+    min-width: 210px;
+    max-width: min(92vw, 320px);
+    max-height: 70vh;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+    padding: 6px;
+}
+.souscat-menu[hidden] { display: none; }
+.souscat-menu button {
+    display: block;
+    width: 100%;
+    text-align: start;
+    background: none;
+    border: none;
+    padding: 9px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #1f2937;
+    cursor: pointer;
+}
+.souscat-menu button:hover { background: #e2e8f0; }
+.souscat-menu button.actif { background: #fef3c7; font-weight: 700; }
+.souscat-menu .souscat-tout { font-weight: 700; border-bottom: 1px solid #e2e8f0; border-radius: 6px 6px 0 0; margin-bottom: 4px; }
+
+.filtre-actif {
+    margin: 4px 0 14px;
+    padding: 8px 12px;
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #1f2937;
+}
+.filtre-actif[hidden] { display: none; }
+.filtre-actif button { margin-inline-start: 8px; border: none; background: #cbd5e1; border-radius: 50%; width: 22px; height: 22px; cursor: pointer; font-size: 16px; line-height: 1; }
+
+/* ===== 5. Page de détail plein écran (annonce ou flash) ===== */
+body.mode-detail .flash-section,
+body.mode-detail .categories-bar,
+body.mode-detail .recherche-bar,
+body.mode-detail main.container { display: none; }
+
+.page-detail[hidden] { display: none; }
+.page-detail { background: #f4f6f8; min-height: 60vh; }
+
+.detail-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 16px;
+    background: #fff;
+    border-bottom: 2px solid #2563eb;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+.detail-topbar-titre { flex: 1; text-align: center; font-weight: 700; color: #1f2937; }
+.detail-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: #e2e8f0;
+    color: #1f2937;
+    font-size: 30px;
+    line-height: 1;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.detail-btn:hover { background: #2563eb; color: #fff; }
+.detail-btn:focus-visible { outline: 2px solid #f59e0b; outline-offset: 2px; }
+[dir="rtl"] .detail-btn-retour svg { transform: scaleX(-1); }
+
+.detail-page-content { max-width: 1000px; margin: 18px auto 40px; padding: 0 15px; }
+.detail-article { background: #fff; border-radius: 10px; padding: 22px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); }
+.detail-article h2 { font-size: 26px; color: #0f172a; margin-bottom: 8px; word-break: break-word; }
+.detail-prix { color: #16a34a; font-size: 24px; font-weight: bold; margin-bottom: 8px; }
+.detail-meta { display: flex; flex-wrap: wrap; gap: 6px 22px; color: #334155; margin-bottom: 16px; }
+.detail-desc { line-height: 1.75; font-size: 16px; color: #1f2937; word-break: break-word; }
+.detail-sous-titre { margin: 6px 0 10px; }
+.detail-sous-titre small { font-weight: normal; color: #64748b; }
+.detail-contact { margin-top: 16px; }
+
+.detail-galerie {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 10px;
+}
+.detail-galerie img,
+.detail-galerie video {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    background: #000;
+    cursor: zoom-in;
+}
+.detail-galerie video { cursor: default; }
+
+/* ===== 4. Infos pratiques ===== */
+.infos-pratiques[hidden] { display: none; }
+.infos-pratiques { margin-bottom: 22px; }
+.infos-titre { margin-bottom: 12px; font-size: 20px; }
+.infos-grille { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.info-carte { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; }
+.info-carte h3 { font-size: 16px; color: #0f172a; margin-bottom: 10px; }
+.info-attente { color: #64748b; font-size: 14px; }
+.info-alerte { margin-top: 8px; padding: 6px 10px; font-size: 12px; color: #92400e; background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; }
+.info-source { margin-top: 10px; font-size: 12px; color: #64748b; }
+.info-texte { white-space: pre-wrap; line-height: 1.6; font-size: 14px; color: #1f2937; word-break: break-word; }
+
+.priere-liste, .meteo-jours, .numeros-liste { list-style: none; }
+.priere-liste li, .meteo-jours li, .numeros-liste li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 7px 8px;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 15px;
+}
+.priere-liste li.prochaine { background: #fef3c7; border-radius: 6px; font-weight: 700; }
+.priere-liste em { font-size: 12px; font-style: normal; color: #b45309; }
+
+.meteo-actuelle { display: flex; align-items: center; gap: 14px; margin-bottom: 8px; }
+.meteo-icone { font-size: 46px; line-height: 1; }
+.meteo-temp { font-size: 30px; font-weight: 800; color: #0f172a; }
+.numeros-liste .btn-tel { margin: 0; padding: 6px 14px; }
+
+/* ===== 6. Outils de localisation (formulaire de dépôt) ===== */
+.loc-outils { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0; }
+.btn-loc-outil { background: #0ea5e9; text-decoration: none; display: inline-block; font-size: 14px; padding: 8px 12px; }
+.btn-loc-outil:hover { background: #0284c7; }
+
+@media (max-width: 768px) {
+    .detail-article { padding: 14px; }
+    .detail-article h2 { font-size: 22px; }
+    .detail-galerie { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+    .detail-galerie img, .detail-galerie video { height: 115px; }
+}

@@ -65,7 +65,12 @@
                 👥 <span id="txt-visites">Visiteurs : 0</span>
             </span>
 
-            <button id="btn-login-admin" data-i18n="btn_admin" onclick="ouvrirModalAdmin()">
+            <button id="btn-contact" data-i18n="btn_contact" onclick="ouvrirContact()">
+                📞 Nous contacter
+            </button>
+
+            <!-- Visible UNIQUEMENT par l'admin connecté -->
+            <button id="btn-admin-panel" data-i18n="btn_admin" style="display:none;" onclick="ouvrirMenuAdmin()">
                 🔑 Admin
             </button>
 
@@ -77,9 +82,21 @@
         </div>
     </div>
 
+    <!-- PAGE DE DÉTAIL PLEIN ÉCRAN (annonce ou flash) : l'en-tête du site reste visible -->
+    <section id="page-detail" class="page-detail" hidden>
+        <div class="detail-topbar">
+            <button type="button" class="detail-btn detail-btn-retour" id="detail-retour" title="Retour à la page principale" aria-label="Retour à la page principale">
+                <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <span class="detail-topbar-titre" id="detail-titre-barre"></span>
+            <button type="button" class="detail-btn" id="detail-fermer" title="Fermer" aria-label="Fermer">&times;</button>
+        </div>
+        <div class="detail-page-content" id="contenu-page-detail"></div>
+    </section>
+
     <!-- 3. BANDE FLASH ROULANTE -->
     <section class="flash-section">
-        <div class="flash-label" data-i18n="flash_title">⚡ Fash </div>
+        <div class="flash-label" data-i18n="flash_title">⚡ Flash</div>
         <div class="marquee-container">
             <div class="marquee-content" id="bande-flash"></div>
         </div>
@@ -122,27 +139,13 @@
         <section class="card-section">
             <h2 data-i18n="annonces_titre">🛒 Annonces récentes</h2>
             <p id="msg-traduction" class="msg-traduction" hidden></p>
+            <div id="filtre-actif" class="filtre-actif" hidden></div>
+            <section id="infos-pratiques" class="infos-pratiques" hidden></section>
             <div id="grille-annonces" class="annonces-grid"></div>
         </section>
     </main>
 
     <!-- 6. MODALES INTERACTIVES -->
-
-    <!-- Détail Annonce -->
-    <dialog id="modal-detail-annonce">
-        <div class="modal-content">
-            <span class="close-btn" onclick="fermerModal('modal-detail-annonce')">&times;</span>
-            <div id="contenu-detail-annonce"></div>
-        </div>
-    </dialog>
-
-    <!-- Détail Flash Info -->
-    <dialog id="modal-detail-flash">
-        <div class="modal-content">
-            <span class="close-btn" onclick="fermerModal('modal-detail-flash')">&times;</span>
-            <div id="contenu-detail-flash"></div>
-        </div>
-    </dialog>
 
     <!-- Connexion Administrateur -->
     <dialog id="modal-admin">
@@ -202,6 +205,14 @@
                     <textarea id="f-contenu" rows="3"></textarea>
                 </div>
                 <div class="form-group">
+                    <label>Priorité d'apparition sur la bande</label>
+                    <select id="f-priorite">
+                        <option value="1">Normale : un passage par tour</option>
+                        <option value="2">Haute : passe en premier à chaque tour</option>
+                        <option value="3">Urgente : en premier, et répétée au milieu du tour</option>
+                    </select>
+                </div>
+                <div class="form-group">
                     <label>Photos / vidéos (glisser ou parcourir)</label>
                     <div class="drop-zone" id="drop-flash">
                         <p>📁 Glissez vos photos/vidéos ici ou <u>parcourez</u></p>
@@ -250,6 +261,10 @@
                             <option>Autres</option>
                         </select>
                     </div>
+                    <div class="form-group" id="grp-souscat" hidden>
+                        <label data-i18n="lbl_souscat">Sous-catégorie (facultatif)</label>
+                        <select id="dep-souscat"></select>
+                    </div>
                     <div class="form-group">
                         <label data-i18n="lbl_ville">Ville *</label>
                         <select id="dep-ville" required></select>
@@ -259,8 +274,8 @@
                         <input type="number" id="dep-prix" min="0">
                     </div>
                     <div class="form-group">
-                        <label data-i18n="lbl_desc">Description courte *</label>
-                        <textarea id="dep-description" rows="4" required></textarea>
+                        <label data-i18n="lbl_desc">Description détaillée *</label>
+                        <textarea id="dep-description" rows="8" required placeholder="Décrivez votre annonce en détail : état, caractéristiques, conditions… (aucune limite de longueur)"></textarea>
                     </div>
                     <div class="form-group">
                         <label data-i18n="lbl_tel">Téléphone *</label>
@@ -268,8 +283,13 @@
                     </div>
                     <div class="form-group">
                         <label data-i18n="lbl_loc">Localisation (Google Maps, Waze…) — facultatif</label>
-                        <input type="text" id="dep-localisation" maxlength="300" placeholder="Lien Google Maps / Waze, ou adresse, ou coordonnées">
+                        <input type="text" id="dep-localisation" maxlength="500" placeholder="Lien Google Maps / Waze, ou adresse, ou coordonnées">
                         <p class="petit-info">Astuce : dans Google Maps ou Waze, touchez « Partager » puis « Copier le lien », et collez-le ici. Vous pouvez aussi écrire l'adresse ou les coordonnées (ex : 35.1681, -2.9335).</p>
+                        <div class="loc-outils">
+                            <button type="button" class="btn btn-loc-outil" id="dep-loc-gps" data-i18n="loc_gps">📍 Ma position actuelle</button>
+                            <a class="btn btn-loc-outil" id="dep-loc-ouvrir" href="https://www.google.com/maps" target="_blank" rel="noopener" data-i18n="loc_choisir">🗺️ Choisir sur Google Maps</a>
+                        </div>
+                        <p class="petit-info" id="dep-loc-msg"></p>
                     </div>
                     <button type="button" class="btn" id="dep-suivant" data-i18n="btn_suivant" style="width:100%;">Suivant ➔</button>
                 </div>
@@ -278,7 +298,7 @@
                 <div class="etape" id="dep-etape2" hidden>
                     <div class="form-group">
                         <label data-i18n="lbl_medias">Glissez ou sélectionnez vos fichiers (Photos, Vidéos)</label>
-                        <p class="petit-info">5 photos max · vidéos 2 Mo max · facultatif</p>
+                        <p class="petit-info" data-i18n="info_medias">Autant de photos que vous voulez · vidéos 2 Mo max · facultatif</p>
                         <div class="drop-zone" id="dep-drop">
                             <p>📁 Glissez vos photos/vidéos ici ou <u>parcourez</u></p>
                             <input type="file" id="dep-fichiers" multiple accept="image/*,video/*" style="display:none;">
@@ -301,6 +321,55 @@
         <div id="zoom-contenu"></div>
         <button type="button" class="zoom-nav zoom-next" onclick="changerZoom(1)" aria-label="Photo suivante">&#8250;</button>
         <p id="zoom-compteur"></p>
+    </dialog>
+
+    <!-- Nous contacter -->
+    <dialog id="modal-contact">
+        <div class="modal-content">
+            <span class="close-btn" onclick="fermerModal('modal-contact')">&times;</span>
+            <h3 data-i18n="contact_titre">📞 Nous contacter</h3>
+            <p class="petit-info" data-i18n="contact_intro">Écrivez-nous : choisissez le moyen qui vous convient.</p>
+            <div class="form-group">
+                <label data-i18n="contact_nom">Votre nom</label>
+                <input type="text" id="ct-nom" maxlength="80">
+            </div>
+            <div class="form-group">
+                <label data-i18n="contact_msg">Votre message</label>
+                <textarea id="ct-msg" rows="5"></textarea>
+            </div>
+            <div class="contact-actions" id="contact-actions"></div>
+        </div>
+    </dialog>
+
+    <!-- Menu Admin (visible seulement une fois connecté en admin) -->
+    <dialog id="modal-admin-menu">
+        <div class="modal-content">
+            <span class="close-btn" onclick="fermerModal('modal-admin-menu')">&times;</span>
+            <h3>🔑 Espace administrateur</h3>
+            <div class="contact-actions">
+                <button type="button" class="btn" onclick="fermerModal('modal-admin-menu'); ouvrirGestionFlash();">⚡ Gérer la bande Flash</button>
+                <button type="button" class="btn" onclick="fermerModal('modal-admin-menu'); ouvrirModalInfos();">ℹ️ Mettre à jour trains et pharmacies de garde</button>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- Infos pratiques saisies à la main (admin) : trains, pharmacies de garde -->
+    <dialog id="modal-infos">
+        <div class="modal-content">
+            <span class="close-btn" onclick="fermerModal('modal-infos')">&times;</span>
+            <h3>ℹ️ Infos pratiques (admin)</h3>
+            <form id="form-infos">
+                <div class="form-group">
+                    <label>🚆 Horaires des trains</label>
+                    <textarea id="inf-trains" rows="6" placeholder="Un horaire par ligne. Ex : Nador → Taourirt : 07h00, 13h30…"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>💊 Pharmacies de garde</label>
+                    <textarea id="inf-pharmacies" rows="6" placeholder="Une pharmacie par ligne (nom, quartier, téléphone) et la période de garde"></textarea>
+                </div>
+                <button type="submit" class="btn">Enregistrer</button>
+            </form>
+        </div>
     </dialog>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
