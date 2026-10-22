@@ -1,4 +1,5 @@
 /* Couche Supabase pour Nador-Annonces : à charger APRÈS script.js */
+const SEC = window.Securite || { admin: { echec() {}, succes() {} }, user: { echec() {}, succes() {} } };
 const sb = supabase.createClient("https://lmcrljbcxjpwvbhoqtxw.supabase.co", "sb_publishable_NYhmeyCG7GPGZrJYsh0jFg_7V5YGrYE");
 
 annonces = []; flashs = []; estAdmin = false; utilisateurConnecte = null;
@@ -18,7 +19,7 @@ async function chargerAnnonces() {
     annonces = data.map(a => ({
         id: a.id, user_id: a.user_id, titre: a.titre, categorie: catNoms[a.categorie_id] || "Autres",
         ville: a.ville, prix: a.prix, description: a.description, telephone: a.telephone || "",
-        localisation: a.localisation || "", sousCategorie: a.sous_categorie || "", premium: a.premium, vues: a.vues, date: Date.parse(a.created_at),
+        localisation: a.localisation || "", premium: a.premium, vues: a.vues, date: Date.parse(a.created_at),
         medias: (a.annonce_medias || []).sort((x, y) => x.ordre - y.ordre).map(m => ({ type: m.type, url: m.url }))
     }));
 }
@@ -26,20 +27,9 @@ async function chargerFlashs() {
     const { data, error } = await sb.from("flashs").select("*, flash_medias(url,type,ordre)")
         .eq("actif", true).order("created_at", { ascending: true });
     if (error) return console.error(error);
-    flashs = data.map(f => ({ id: f.id, titre: f.titre, type: "texte", contenu: f.texte || "", priorite: Number(f.priorite) || 1,
+    flashs = data.map(f => ({ id: f.id, titre: f.titre, type: "texte", contenu: f.texte || "",
         medias: (f.flash_medias || []).sort((x, y) => x.ordre - y.ordre).map(m => ({ type: m.type, url: m.url })) }));
 }
-async function chargerInfos() {
-    const { data, error } = await sb.from("infos_pratiques").select("cle,texte,maj_le");
-    if (error) return console.warn("Table infos_pratiques indisponible (non créée ?) :", error.message);
-    (data || []).forEach(r => { infosPratiques[r.cle] = { texte: r.texte || "", majLe: Date.parse(r.maj_le) || 0 }; });
-}
-window.sauvegarderInfosDistant = async function (o) {
-    const lignes = Object.keys(o).map(cle => ({ cle, texte: o[cle].texte || "", maj_le: new Date(o[cle].majLe || Date.now()).toISOString() }));
-    const { error } = await sb.from("infos_pratiques").upsert(lignes);
-    if (error) erreur("Enregistrement des infos pratiques impossible (la table infos_pratiques existe-t-elle ?).", error);
-};
-
 async function chargerVisites() {
     let n;
     if (!sessionStorage.getItem("visiteSb")) { n = (await sb.rpc("incrementer_visiteurs")).data; sessionStorage.setItem("visiteSb", "1"); }
@@ -70,10 +60,10 @@ async function appliquerSession(session) {
 $("form-admin-login").addEventListener("submit", async e => {
     e.stopImmediatePropagation(); e.preventDefault();
     const { data, error } = await sb.auth.signInWithPassword({ email: $("admin-email").value.trim(), password: $("admin-pass").value });
-    if (error) return alert("Email ou mot de passe incorrect.");
+    if (error) { SEC.admin.echec(); return alert("Email ou mot de passe incorrect."); }
     await appliquerSession(data.session);
-    if (!estAdmin) { await sb.auth.signOut(); await appliquerSession(null); majUI(); return alert("Ce compte n'est pas administrateur."); }
-    $("admin-pass").value = ""; fermerModal("modal-admin"); majUI();
+    if (!estAdmin) { SEC.admin.echec(); await sb.auth.signOut(); await appliquerSession(null); majUI(); return alert("Ce compte n'est pas administrateur."); }
+    SEC.admin.succes(); $("admin-pass").value = ""; fermerModal("modal-admin"); majUI();
 }, true);
 
 $("form-user-auth").addEventListener("submit", async e => {
@@ -84,7 +74,9 @@ $("form-user-auth").addEventListener("submit", async e => {
         res = await sb.auth.signUp({ email, password, options: { data: { nom_complet: $("u-nom").value.trim() } } });
         if (!res.error && !res.data.session) return alert("Compte créé. Vérifiez votre email pour confirmer votre inscription, puis connectez-vous.");
     } else res = await sb.auth.signInWithPassword({ email, password });
+    if (res.error) { if (!modeInscription) SEC.user.echec(); } 
     if (res.error) return alert(modeInscription ? "Inscription impossible : " + res.error.message : "Email ou mot de passe incorrect.");
+    SEC.user.succes();
     await appliquerSession(res.data.session);
     $("form-user-auth").reset(); fermerModal("modal-user"); majUI();
 }, true);
@@ -98,7 +90,7 @@ supprimerAnnonce = async function (id) {
     if (!confirm("Voulez-vous vraiment supprimer cette annonce ?")) return;
     const { error } = await sb.from("annonces").delete().eq("id", id);
     if (error) return erreur("Suppression impossible.", error);
-    fermerPageDetail(); await chargerAnnonces(); afficherAnnonces();
+    $("modal-detail-annonce").close(); await chargerAnnonces(); afficherAnnonces();
 };
 togglePremium = async function (id) {
     const a = trouver(id); if (!a) return;
@@ -106,11 +98,10 @@ togglePremium = async function (id) {
     if (error) return erreur("Action impossible.", error);
     await chargerAnnonces(); afficherAnnonces();
 };
-/* Compteur de vues : script.js appelle ce crochet à CHAQUE clic sur une annonce */
-window.enregistrerVueDistante = async function (a) {
-    const { data, error } = await sb.rpc("incrementer_vues", { p_id: a.id });
-    if (error) { console.error("Compteur de vues : la fonction SQL incrementer_vues a échoué", error); return; }
-    if (typeof data === "number") { a.vues = data; rafraichirVuesAffichees(a); }
+const _voirDetail = voirDetailAnnonce;
+voirDetailAnnonce = function (id) {
+    if (trouver(id) && !lireSession("vus", []).includes(String(id))) sb.rpc("incrementer_vues", { p_id: id });
+    _voirDetail(id);
 };
 
 $("form-deposer").addEventListener("submit", async e => {
@@ -120,15 +111,13 @@ $("form-deposer").addEventListener("submit", async e => {
     const btn = $("dep-publier"); btn.disabled = true;
     try {
         const prix = $("dep-prix").value;
-        const ligne = {
+        const { data: a, error } = await sb.from("annonces").insert({
             user_id: utilisateurConnecte ? utilisateurConnecte.id : null,
             categorie_id: catIds[$("dep-categorie").value] || catIds["Autres"],
             titre: $("dep-titre").value.trim(), description: $("dep-description").value.trim(),
             ville: $("dep-ville").value, prix: prix ? parseFloat(prix) : null,
             telephone: $("dep-telephone").value.trim(), localisation: $("dep-localisation").value.trim()
-        };
-        if ($("dep-souscat").value) ligne.sous_categorie = $("dep-souscat").value;
-        const { data: a, error } = await sb.from("annonces").insert(ligne).select("id").single();
+        }).select("id").single();
         if (error) throw error;
         const meds = [];
         for (const [i, m] of mediasDepot.entries()) meds.push({ annonce_id: a.id, type: m.type, url: await envoyerMedia(m, "annonces"), ordre: i });
@@ -147,8 +136,6 @@ $("form-ajouter-flash").addEventListener("submit", async e => {
     if (!estAdmin) return;
     try {
         const champs = { titre: $("f-titre").value.trim(), texte: $("f-contenu").value };
-        const prio = Number($("f-priorite").value) || 1, avant = flashEnEdition !== null ? flashs.find(x => String(x.id) === String(flashEnEdition)) : null;
-        if (prio !== 1 || (avant && (Number(avant.priorite) || 1) !== 1)) champs.priorite = prio;
         let id = flashEnEdition;
         if (id !== null) { const r = await sb.from("flashs").update(champs).eq("id", id); if (r.error) throw r.error; await sb.from("flash_medias").delete().eq("flash_id", id); }
         else { const r = await sb.from("flashs").insert(champs).select("id").single(); if (r.error) throw r.error; id = r.data.id; }
@@ -171,7 +158,7 @@ supprimerFlash = async function (id) {
 (async () => {
     await chargerCategories();
     await appliquerSession((await sb.auth.getSession()).data.session);
-    await Promise.all([chargerAnnonces(), chargerFlashs(), chargerVisites(), chargerInfos()]);
+    await Promise.all([chargerAnnonces(), chargerFlashs(), chargerVisites()]);
     majUI();
     const p = new URLSearchParams(location.search).get("annonce");
     if (p) voirDetailAnnonce(p);

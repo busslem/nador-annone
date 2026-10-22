@@ -8,7 +8,7 @@ const lire = (k, d) => {
 };
 
 const session = lire("session", null);
-const estAdmin = sessionStorage.getItem("admin") === "true";
+const estAdmin = false;   // l'admin est géré par Supabase, plus par sessionStorage (falsifiable)
 const editId = new URLSearchParams(location.search).get("edit");
 
 let annonces = lire("annonces", []);
@@ -54,6 +54,8 @@ $("form-depot").addEventListener("submit", e => {
         medias: medias.slice() 
     };
     
+    if (window.Securite && !Securite.verifierChamps([["Titre", champs.titre], ["Description", champs.description]])) return;
+
     const avant = JSON.stringify(annonces);
     
     if (ann) {

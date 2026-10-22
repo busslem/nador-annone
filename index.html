@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nador-Annonces</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' data: blob: https://*.supabase.co wss://*.supabase.co https://api.mymemory.translated.net; object-src 'none'; base-uri 'self'; form-action 'self'">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <script>if (window.top !== window.self) { try { window.top.location = window.self.location; } catch (e) { document.documentElement.style.display = "none"; } }</script>
+    <title>Nador-Service</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -16,7 +19,7 @@
             <div class="logo-container">
                 <div class="title-row">
                     <h1 class="brand-title">
-                        <span class="brand-primary">Nador</span><span class="brand-accent">-Annonces</span>
+                        <span class="brand-primary">Nador</span><span class="brand-accent">-Service</span>
                         
                         <!-- Le micro est placé UNIQUEMENT ici (à gauche) -->
                         <svg class="mic-icon-title" viewBox="0 0 64 64" width="40" height="40" aria-hidden="true">
@@ -34,7 +37,7 @@
                         </svg>
                     </h1>
                 </div>
-                <p class="brand-tagline" data-i18n="tagline">Votre espace incontournable d’annonces et de publicité interactive</p>
+                <p class="brand-tagline" data-i18n="tagline">Votre portail des services, annonces, publicités et opportunités à Nador et sa région</p>
             </div>
         </div>
 
@@ -155,11 +158,11 @@
             <form id="form-admin-login">
                 <div class="form-group">
                     <label>Email Admin</label>
-                    <input type="email" id="admin-email" value="admin@nador-annonce.com" required>
+                    <input type="email" id="admin-email" placeholder="Email administrateur" autocomplete="username" required>
                 </div>
                 <div class="form-group">
                     <label>Mot de passe Admin</label>
-                    <input type="password" id="admin-pass" required>
+                    <input type="password" id="admin-pass" autocomplete="current-password" required>
                 </div>
                 <button type="submit" class="btn">Se connecter</button>
             </form>
@@ -375,6 +378,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
     <script src="media.js"></script>
     <script src="script.js"></script>
+    <script src="securite.js"></script>
     <script src="supabase-data.js"></script>
 
 </body>
