@@ -1,13 +1,22 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' data: blob: https://*.supabase.co wss://*.supabase.co https://api.mymemory.translated.net; object-src 'none'; base-uri 'self'; form-action 'self'">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' data: blob: https://*.supabase.co wss://*.supabase.co https://api.mymemory.translated.net; object-src 'none'; base-uri 'self'; form-action 'self'">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <script>if (window.top !== window.self) { try { window.top.location = window.self.location; } catch (e) { document.documentElement.style.display = "none"; } }</script>
     <title>Nador-Service</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Poppins:wght@500;600&family=Caveat:wght@600&display=swap" rel="stylesheet">
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#0e5a74">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Nador-Service">
+    <link rel="apple-touch-icon" href="icon-192.png">
 </head>
 <body>
 
@@ -39,6 +48,7 @@
                 </div>
                 <p class="brand-tagline" data-i18n="tagline">Votre portail des services, annonces, publicités et opportunités à Nador et sa région</p>
             </div>
+            <p class="header-slogan" aria-hidden="true">Nador,<br>notre ville,<br>notre site !</p>
         </div>
 
         <!-- Bande d'actions -->
@@ -60,8 +70,10 @@
                 👤Se Connecter
             </button>
 
+            <button id="btn-demander" data-i18n="btn_demander" type="button">🙋 Demander un service</button>
+            <button id="btn-installer" type="button" hidden data-i18n="btn_installer">📲 Installer l'application</button>
             <button id="btn-ouvrir-depot" data-i18n="btn_publier_top" onclick="ouvrirDepot()">
-                ➕ Publier une annonce
+                ➕ Publier
             </button>
 
             <span class="visiteurs">
@@ -110,15 +122,11 @@
     <nav class="categories-bar" aria-label="Catégories">
         <div class="categories-container">
             <button type="button" class="categorie-btn active" data-categorie="toutes" aria-pressed="true">🏠 Toutes</button>
-            <button type="button" class="categorie-btn" data-categorie="Immobilier" aria-pressed="false">🏠 Immobilier</button>
-            <button type="button" class="categorie-btn" data-categorie="Véhicules" aria-pressed="false">🚗 Véhicules</button>
-            <button type="button" class="categorie-btn" data-categorie="Emploi" aria-pressed="false">💼 Emploi</button>
-            <button type="button" class="categorie-btn" data-categorie="Commerce" aria-pressed="false">🛒 Commerce</button>
             <button type="button" class="categorie-btn" data-categorie="Services" aria-pressed="false">🛠️ Services</button>
+            <button type="button" class="categorie-btn" data-categorie="Logement" aria-pressed="false">🏠 Logement</button>
             <button type="button" class="categorie-btn" data-categorie="Formation" aria-pressed="false">🎓 Formation</button>
-            <button type="button" class="categorie-btn" data-categorie="Téléphones et informatique" aria-pressed="false">💻 Téléphones et informatique</button>
+            <button type="button" class="categorie-btn" data-categorie="Commerce" aria-pressed="false">🛒 Commerce</button>
             <button type="button" class="categorie-btn" data-categorie="Infos pratiques" aria-pressed="false">ℹ️ Infos pratiques</button>
-            <button type="button" class="categorie-btn" data-categorie="Autres" aria-pressed="false">📢 Autres</button>
 
             <!-- Bouton Rechercher (à droite de « Autres ») -->
             <button type="button" class="btn-rechercher-cat" id="btn-rechercher" data-i18n="btn_rechercher" aria-controls="recherche-bar" aria-expanded="false">🔍 Rechercher</button>
@@ -143,6 +151,7 @@
             <h2 data-i18n="annonces_titre">🛒 Annonces récentes</h2>
             <p id="msg-traduction" class="msg-traduction" hidden></p>
             <div id="filtre-actif" class="filtre-actif" hidden></div>
+            <div id="filtres-dyn" class="filtres-dyn"></div>
             <section id="infos-pratiques" class="infos-pratiques" hidden></section>
             <div id="grille-annonces" class="annonces-grid"></div>
         </section>
@@ -238,7 +247,7 @@
     <dialog id="modal-deposer">
         <div class="modal-content">
             <span class="close-btn" onclick="fermerModal('modal-deposer')">&times;</span>
-            <h3 data-i18n="deposer_titre">📢 Déposer une annonce</h3>
+            <h3 data-i18n="deposer_titre">📢 Publier une annonce</h3>
             <p class="etape-indic" id="dep-indic">1 / 2</p>
             <div class="info-compte" id="dep-info-compte"></div>
 
@@ -251,27 +260,20 @@
                     </div>
                     <div class="form-group">
                         <label data-i18n="lbl_cat">Catégorie *</label>
-                        <select id="dep-categorie" required>
-                            <option value="">— Choisir —</option>
-                            <option>Immobilier</option>
-                            <option>Véhicules</option>
-                            <option>Emploi</option>
-                            <option>Commerce</option>
-                            <option>Services</option>
-                            <option>Formation</option>
-                            <option>Téléphones et informatique</option>
-                            <option>Infos pratiques</option>
-                            <option>Autres</option>
-                        </select>
+                        <select id="dep-categorie" required><option value="">— Choisir —</option></select>
                     </div>
                     <div class="form-group" id="grp-souscat" hidden>
                         <label data-i18n="lbl_souscat">Sous-catégorie (facultatif)</label>
                         <select id="dep-souscat"></select>
                     </div>
+                    <div id="dep-champs-dyn" class="dyn-grille"></div>
                     <div class="form-group">
                         <label data-i18n="lbl_ville">Ville *</label>
                         <select id="dep-ville" required></select>
                     </div>
+                    <div class="form-group"><label data-i18n="lbl_region">Région</label><select id="dep-region"></select></div>
+                    <div class="form-group"><label data-i18n="lbl_quartier">Quartier</label><input type="text" id="dep-quartier" maxlength="80"></div>
+                    <div class="form-group"><label data-i18n="lbl_secteur">Secteur / domaine</label><input type="text" id="dep-secteur" maxlength="80"></div>
                     <div class="form-group">
                         <label data-i18n="lbl_prix">Prix (Optionnel)</label>
                         <input type="number" id="dep-prix" min="0">
@@ -282,7 +284,7 @@
                     </div>
                     <div class="form-group">
                         <label data-i18n="lbl_tel">Téléphone *</label>
-                        <input type="tel" id="dep-telephone" required pattern="[0-9+ ]{8,16}" placeholder="0612345678">
+                        <input type="tel" id="dep-telephone" required pattern="[0-9+ ]{8,16}" placeholder="06 12 34 56 78">
                     </div>
                     <div class="form-group">
                         <label data-i18n="lbl_loc">Localisation (Google Maps, Waze…) — facultatif</label>
@@ -310,7 +312,7 @@
                     </div>
                     <div class="etape-actions">
                         <button type="button" class="btn btn-secondary" id="dep-retour" data-i18n="btn_retour">⬅️ Retour</button>
-                        <button type="submit" class="btn btn-publier" id="dep-publier" data-i18n="btn_publier">Publier l'annonce</button>
+                        <button type="submit" class="btn btn-publier" id="dep-publier" data-i18n="btn_publier">Publier</button>
                     </div>
                 </div>
             </form>
@@ -375,11 +377,10 @@
         </div>
     </dialog>
 
+    <footer class="pied"><a href="confidentialite.html" data-i18n="lien_confid">Politique de confidentialité</a> · <span>Nador-Service</span></footer>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-    <script src="media.js"></script>
-    <script src="script.js"></script>
-    <script src="securite.js"></script>
-    <script src="supabase-data.js"></script>
+    <script src="app.js"></script>
 
 </body>
 </html>
