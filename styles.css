@@ -328,7 +328,7 @@ body { background-color: #f4f6f8; color: #333; }
     from { transform: translateX(0); }
     to   { transform: translateX(-50%); }
 }
-@media (prefers-reduced-motion: reduce) { .marquee-content { animation-duration: 240s !important; }: ; }
+@media (prefers-reduced-motion: reduce) { .marquee-content { animation-duration: 240s !important; } }
 /* Gestion des Flashs (admin) */
 .flash-admin-ligne {
     display: flex;
@@ -1176,4 +1176,32 @@ dialog::backdrop { background: rgba(0,0,0,0.6); }
 
 @media (prefers-reduced-motion: reduce) {
     .categorie-btn, .cat-arrow { transition: none; }
+}
+
+/* =====================================================================
+   14. AFFICHAGE TÉLÉPHONE (écrans étroits) — même site, mise en page compacte
+   ===================================================================== */
+@media (max-width: 768px) {
+    .main-header { min-height: 0; padding: 14px 0 12px; }
+    .header-container { padding: 0 14px; gap: 6px; }
+    .brand-title { font-size: 30px; }
+    .mic-icon-title { width: 30px; margin-left: 8px; }
+    .brand-tagline { max-width: none; margin-top: 6px; padding-left: 10px; border-left-width: 3px; font-size: 12px; line-height: 1.35; }
+    .nouvelle-bande { padding: 8px 10px; gap: 6px; }
+    .lang-bar { flex-wrap: wrap; justify-content: center; gap: 2px; }
+    .lang-bar button { padding: 5px 8px; font-size: 12px; }
+    .actions-bar { width: 100%; flex-wrap: wrap; justify-content: center; gap: 6px; }
+    .actions-bar button, #btn-login-user, #btn-ouvrir-depot, #btn-demander, #btn-installer, #btn-contact, #btn-admin-panel, #btn-logout { padding: 6px 10px; font-size: 12px; }
+    .visiteurs { padding: 5px 8px; font-size: 12px; }
+    #label-user-connecte { font-size: 12px; }
+    /* catégories : passent à la ligne au lieu de défiler sur le côté */
+    .categories-bar { padding: 8px 0; }
+    .categories-container { flex-wrap: wrap; justify-content: center; overflow-x: visible; gap: 6px; padding: 2px 8px; font-size: 12.5px; }
+    .categories-container > :first-child, .categories-container > :last-child { margin-inline: 0; }
+    .categorie-btn { padding: 0.45em 0.5em 0.45em 0.8em; }
+}
+@media (max-width: 480px) {
+    .brand-title { font-size: 26px; }
+    .brand-tagline { display: none; }
+    .actions-bar button, #btn-login-user, #btn-ouvrir-depot, #btn-demander, #btn-installer, #btn-contact { flex: 1 1 44%; }
 }

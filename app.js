@@ -2176,10 +2176,10 @@ let invite = null;
 const btnInst = $q("btn-installer"), ios = /iphone|ipad|ipod/i.test(navigator.userAgent), autonome = matchMedia("(display-mode: standalone)").matches || navigator.standalone;
 addEventListener("beforeinstallprompt", e => { e.preventDefault(); invite = e; if (!autonome) btnInst.hidden = false; });
 addEventListener("appinstalled", () => { btnInst.hidden = true; });
-if (ios && !autonome) btnInst.hidden = false;
+if (!autonome) btnInst.hidden = false;
 btnInst.addEventListener("click", async () => {
     if (invite) { invite.prompt(); await invite.userChoice; invite = null; btnInst.hidden = true; }
-    else alert(T("Sur iPhone : touchez « Partager » puis « Sur l'écran d'accueil ».", "On iPhone: tap “Share” then “Add to Home Screen”.", "على آيفون: اضغط «مشاركة» ثم «إضافة إلى الشاشة الرئيسية»."));
+    else alert(ios ? T("Sur iPhone : touchez « Partager » puis « Sur l'écran d'accueil ».", "On iPhone: tap “Share” then “Add to Home Screen”.", "على آيفون: اضغط «مشاركة» ثم «إضافة إلى الشاشة الرئيسية».") : T("Ouvrez le menu du navigateur (⋮ ou l'icône d'installation de la barre d'adresse), puis « Installer l'application » ou « Ajouter à l'écran d'accueil ».", "Open the browser menu (⋮ or the install icon in the address bar), then “Install app” or “Add to Home screen”.", "افتح قائمة المتصفح (⋮ أو أيقونة التثبيت في شريط العنوان) ثم اختر «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية»."));
 });
 if ("serviceWorker" in navigator && /^https?:/.test(location.protocol)) navigator.serviceWorker.register("sw.js").catch(() => {});
 
