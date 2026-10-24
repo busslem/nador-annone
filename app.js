@@ -797,8 +797,11 @@ function majFleches() {
 
 let menuSousCat = null;
 
+let fondSousCat = null;
 function fermerMenuSousCat() {
     if (menuSousCat) menuSousCat.hidden = true;
+    if (fondSousCat) fondSousCat.hidden = true;
+    document.documentElement.classList.remove("souscat-ouvert");
     document.querySelectorAll(".cat-arrow.ouvert").forEach(a => { a.classList.remove("ouvert"); a.setAttribute("aria-expanded", "false"); });
 }
 
@@ -828,6 +831,15 @@ function ouvrirMenuSousCat(btn) {
 
     const fl = btn.querySelector(".cat-arrow");
     if (fl) { fl.classList.add("ouvert"); fl.setAttribute("aria-expanded", "true"); }
+    if (!fondSousCat) {
+        fondSousCat = document.createElement("div");
+        fondSousCat.className = "souscat-fond";
+        fondSousCat.addEventListener("click", fermerMenuSousCat);
+        fondSousCat.addEventListener("touchmove", e => e.preventDefault(), { passive: false });
+        document.body.insertBefore(fondSousCat, menuSousCat);
+    }
+    fondSousCat.hidden = false;
+    document.documentElement.classList.add("souscat-ouvert");
     menuSousCat.hidden = false;
     const r = btn.getBoundingClientRect();
     const w = menuSousCat.offsetWidth;
@@ -835,6 +847,7 @@ function ouvrirMenuSousCat(btn) {
     left = Math.max(8, Math.min(left, window.innerWidth - w - 8));
     menuSousCat.style.left = left + "px";
     menuSousCat.style.top = (r.bottom + 6) + "px";
+    menuSousCat.style.maxHeight = Math.max(160, window.innerHeight - r.bottom - 20) + "px";
 }
 
 function majFiltreActif() {
@@ -2000,24 +2013,20 @@ choisirCategorie = function (c, s) { FILT = {}; _cc(c, s); rendreFiltres(); };
 /* ===== 8. Recherche : mots clés + ville, région, secteur, quartier ===== */
 const adv = document.createElement("div");
 adv.className = "recherche-avancee";
-adv.innerHTML = `<select id="rv-ville"></select><select id="rv-region"></select><input id="rv-secteur" type="text" maxlength="60"><input id="rv-quartier" type="text" maxlength="60">`;
+adv.innerHTML = `<select id="rv-ville"></select><input id="rv-quartier" type="text" maxlength="60">`;
 $q("recherche-bar").appendChild(adv);
 adv.addEventListener("input", () => afficherAnnonces());
 function majRechercheAvancee() {
-    const sv = $q("rv-ville").value, sr = $q("rv-region").value;
+    const sv = $q("rv-ville").value;
     remplirVilles($q("rv-ville")); $q("rv-ville").options[0].textContent = T("Toutes les villes", "All cities", "كل المدن"); $q("rv-ville").value = sv;
-    $q("rv-region").innerHTML = `<option value="">${T("Toutes les régions", "All regions", "كل الجهات")}</option>` + REGIONS.map(x => `<option>${esc(x)}</option>`).join(""); $q("rv-region").value = sr;
-    $q("rv-secteur").placeholder = T("Secteur / domaine", "Sector / field", "القطاع / المجال");
     $q("rv-quartier").placeholder = T("Quartier", "Neighbourhood", "الحي");
 }
 rechercher = function (liste) {
     const on = !$q("recherche-bar").hidden, g = id => on ? nz($q(id).value) : "";
-    const ville = g("rv-ville"), region = g("rv-region"), secteur = g("rv-secteur"), quartier = g("rv-quartier");
+    const ville = g("rv-ville"), quartier = g("rv-quartier");
     const mots = nz(termeRecherche).split(/\s+/).filter(Boolean);
     return liste.filter(a => {
         if (ville && nz(a.ville) !== ville) return false;
-        if (region && nz(a.region) !== region) return false;
-        if (secteur && !nz(a.secteur).includes(secteur)) return false;
         if (quartier && !nz(a.quartier).includes(quartier)) return false;
         if (!mots.length) return true;
         const txt = nz([a.titre, a.description, a.ville, a.region, a.secteur, a.quartier, a.categorie, a.sousCategorie, Object.values(a.attributs || {}).join(" ")].join(" "));

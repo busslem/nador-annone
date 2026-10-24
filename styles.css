@@ -408,11 +408,11 @@ body { background-color: #f4f6f8; color: #333; }
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 2em;
-    height: 2em;
-    margin-inline-start: 0.6em;
+    width: 1.7em;
+    height: 1.7em;
+    margin-inline-start: 0.5em;
     border-radius: 50%;
-    background: var(--c);
+    background: #94a3b8;
     color: #fff;
     font-size: 1em;
     font-weight: 900;
@@ -422,11 +422,11 @@ body { background-color: #f4f6f8; color: #333; }
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
     transition: background .2s ease, transform .2s ease;
 }
-.cat-arrow:hover { background: #f97316; color: #fff; transform: scale(1.12); }
-.cat-arrow.ouvert { background: #f97316; color: #fff; transform: rotate(180deg); }
+.cat-arrow:hover { background: #64748b; color: #fff; transform: scale(1.12); }
+.cat-arrow.ouvert { background: #64748b; color: #fff; transform: rotate(180deg); }
 /* Sur un bouton coloré (survol / actif), la flèche devient blanche */
-.categorie-btn:hover .cat-arrow, .categorie-btn.active .cat-arrow { background: #fff; color: var(--c); }
-.categorie-btn:hover .cat-arrow:hover, .categorie-btn.active .cat-arrow:hover { background: #f97316; color: #fff; }
+.categorie-btn:hover .cat-arrow, .categorie-btn.active .cat-arrow { background: #fff; color: #64748b; }
+.categorie-btn:hover .cat-arrow:hover, .categorie-btn.active .cat-arrow:hover { background: #e2e8f0; color: #475569; }
 
 /* Menu des sous-catégories */
 .souscat-menu {
@@ -1182,7 +1182,7 @@ dialog::backdrop { background: rgba(0,0,0,0.6); }
    14. AFFICHAGE TÉLÉPHONE (écrans étroits) — même site, mise en page compacte
    ===================================================================== */
 @media (max-width: 768px) {
-    .main-header { min-height: 0; padding: 14px 0 12px; }
+    .main-header { min-height: 150px; padding: calc(env(safe-area-inset-top, 0px) + 30px) 0 18px; background-position: 60% 40%; }
     .header-container { padding: 0 14px; gap: 6px; }
     .brand-title { font-size: 30px; }
     .mic-icon-title { width: 30px; margin-left: 8px; }
@@ -1194,14 +1194,27 @@ dialog::backdrop { background: rgba(0,0,0,0.6); }
     .actions-bar button, #btn-login-user, #btn-ouvrir-depot, #btn-demander, #btn-installer, #btn-contact, #btn-admin-panel, #btn-logout { padding: 6px 10px; font-size: 12px; }
     .visiteurs { padding: 5px 8px; font-size: 12px; }
     #label-user-connecte { font-size: 12px; }
-    /* catégories : passent à la ligne au lieu de défiler sur le côté */
-    .categories-bar { padding: 8px 0; }
-    .categories-container { flex-wrap: wrap; justify-content: center; overflow-x: visible; gap: 6px; padding: 2px 8px; font-size: 12.5px; }
-    .categories-container > :first-child, .categories-container > :last-child { margin-inline: 0; }
-    .categorie-btn { padding: 0.45em 0.5em 0.45em 0.8em; }
 }
 @media (max-width: 480px) {
     .brand-title { font-size: 26px; }
     .brand-tagline { display: none; }
     .actions-bar button, #btn-login-user, #btn-ouvrir-depot, #btn-demander, #btn-installer, #btn-contact { flex: 1 1 44%; }
 }
+
+/* =====================================================================
+   15. CATÉGORIES : une seule ligne compacte, défilement horizontal pour le reste ; sous-catégories en page séparée
+   ===================================================================== */
+.categories-bar { padding: 8px 0; }
+.categories-container { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; overflow-y: hidden; gap: 0.4em; padding: 3px 8px; font-size: clamp(11px, 0.95vw, 14px); -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.categories-container::-webkit-scrollbar { display: none; }
+.categorie-btn { padding: 0.4em 0.4em 0.4em 0.8em; border-width: 1.5px; }
+.btn-rechercher-cat, .btn-actualiser { flex-shrink: 0; }
+@media (max-width: 768px) {
+    .categories-container { font-size: 11.5px; gap: 5px; }
+    .categorie-btn { padding: 0.35em 0.35em 0.35em 0.7em; }
+}
+/* Fond sombre derrière le menu des sous-catégories ; la page principale ne bouge plus tant qu'il est ouvert */
+.souscat-fond { position: fixed; inset: 0; z-index: 999; background: rgba(15, 23, 42, 0.35); touch-action: none; }
+.souscat-fond[hidden] { display: none; }
+.souscat-menu { overscroll-behavior: contain; -webkit-overflow-scrolling: touch; touch-action: pan-y; }
+html.souscat-ouvert, html.souscat-ouvert body { overflow: hidden; }
