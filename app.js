@@ -133,7 +133,7 @@ const traductions = {
 /* Textes supplémentaires de l'interface (cartes, détails, boutons du haut, messages) */
 Object.assign(traductions.fr, {
     tagline: "Votre portail des services, annonces, publicités et opportunités à Nador et sa région",
-    btn_login: "👤 Se Connecter", btn_publier_top: "➕ Publier une annonce", btn_admin: "🔧 Admin", btn_logout: "Déconnexion",
+    btn_login: "👤 Se Connecter", btn_publier_top: "➕ Publier", btn_admin: "🔧 Admin", btn_logout: "Déconnexion",
     btn_rechercher: "🔍 Rechercher", placeholder_recherche: "Rechercher une annonce (titre, description, ville, catégorie)...",
     bonjour: "Bonjour", voir_plus: "Voir plus", prix_non_specifie: "Prix non spécifié", devise: "DH", pas_image: "Pas d'image",
     prem_titre: "⭐ Annonces Premium", autres_annonces: "Autres annonces",
@@ -148,7 +148,7 @@ Object.assign(traductions.fr, {
 });
 Object.assign(traductions.en, {
     tagline: "Your gateway to services, classified ads, advertising and opportunities in Nador and the region",
-    btn_login: "👤 Log in", btn_publier_top: "➕ Post an ad", btn_admin: "🔧 Admin", btn_logout: "Log out",
+    btn_login: "👤 Log in", btn_publier_top: "➕ Post", btn_admin: "🔧 Admin", btn_logout: "Log out",
     btn_rechercher: "🔍 Search", placeholder_recherche: "Search an ad (title, description, city, category)...",
     bonjour: "Hello", voir_plus: "See more", prix_non_specifie: "Price not specified", devise: "DH", pas_image: "No image",
     prem_titre: "⭐ Premium Ads", autres_annonces: "Other ads",
@@ -163,7 +163,7 @@ Object.assign(traductions.en, {
 });
 Object.assign(traductions.ar, {
     tagline: "بوابتك للخدمات والإعلانات والفرص في الناظور وجهتها",
-    btn_login: "👤 تسجيل الدخول", btn_publier_top: "➕ أضف إعلانًا", btn_admin: "🔧 المسؤول", btn_logout: "تسجيل الخروج",
+    btn_login: "👤 تسجيل الدخول", btn_publier_top: "➕ انشر", btn_admin: "🔧 المسؤول", btn_logout: "تسجيل الخروج",
     btn_rechercher: "🔍 بحث", placeholder_recherche: "ابحث عن إعلان (العنوان، الوصف، المدينة، الفئة)...",
     bonjour: "مرحبا", voir_plus: "عرض المزيد", prix_non_specifie: "السعر غير محدد", devise: "درهم", pas_image: "لا توجد صورة",
     prem_titre: "⭐ إعلانات مميزة (Premium)", autres_annonces: "إعلانات أخرى",
@@ -2200,4 +2200,18 @@ function majExt() {
 const _cl = changerLangue;
 changerLangue = function (l) { _cl(l); majExt(); };
 changerLangue(langueActuelle);
+})();
+
+/* ===== Sélecteur de langue : 🌐 (noms complets) + abréviations Fr/En/Ar ===== */
+(function () {
+    const globe = document.getElementById("lang-globe"), menu = document.getElementById("lang-menu");
+    if (!globe || !menu) return;
+    const fermer = () => { menu.hidden = true; globe.setAttribute("aria-expanded", "false"); };
+    const marquer = () => document.querySelectorAll("#lang-bar [data-lang]").forEach(b => b.classList.toggle("actif", b.dataset.lang === langueActuelle));
+    globe.addEventListener("click", e => { e.stopPropagation(); const ouvrir = menu.hidden; menu.hidden = !ouvrir; globe.setAttribute("aria-expanded", String(ouvrir)); });
+    document.addEventListener("click", e => { if (!e.target.closest("#lang-bar")) fermer(); else if (e.target.closest("#lang-menu button")) fermer(); });
+    document.addEventListener("keydown", e => { if (e.key === "Escape") fermer(); });
+    const _prec = changerLangue;
+    changerLangue = function (l) { _prec(l); marquer(); };
+    marquer();
 })();

@@ -57,43 +57,34 @@
     <!-- NOUVELLE BANDE : LANGUES À GAUCHE / ACTIONS À DROITE -->
     <div class="nouvelle-bande">
         <!-- Langues à gauche -->
-        <div class="lang-bar">
-            <span>🌐</span>
-            <button onclick="changerLangue('fr')">Français</button>
-            <button onclick="changerLangue('en')">English</button>
-            <button onclick="changerLangue('ar')">العربية</button>
+        <div class="lang-bar" id="lang-bar">
+            <button type="button" class="lang-globe" id="lang-globe" aria-haspopup="true" aria-expanded="false" title="Langue / Language / اللغة">🌐</button>
+            <div class="lang-abbr">
+                <button type="button" data-lang="fr" onclick="changerLangue('fr')">Fr</button>
+                <button type="button" data-lang="en" onclick="changerLangue('en')">En</button>
+                <button type="button" data-lang="ar" onclick="changerLangue('ar')">Ar</button>
+            </div>
+            <div class="lang-menu" id="lang-menu" role="menu" hidden>
+                <button type="button" role="menuitem" data-lang="fr" onclick="changerLangue('fr')">Français</button>
+                <button type="button" role="menuitem" data-lang="en" onclick="changerLangue('en')">English</button>
+                <button type="button" role="menuitem" data-lang="ar" onclick="changerLangue('ar')">العربية</button>
+            </div>
         </div>
 
         <!-- Actions à droite -->
         <div class="actions-bar">
-            <button id="btn-login-user" data-i18n="btn_login" onclick="ouvrirModalUser()">
-                👤Se Connecter
-            </button>
-
+            <button id="btn-login-user" data-i18n="btn_login" onclick="ouvrirModalUser()">👤 Se Connecter</button>
+            <button id="btn-ouvrir-depot" data-i18n="btn_publier_top" onclick="ouvrirDepot()">➕ Publier</button>
+            <button type="button" id="btn-rechercher" data-i18n="btn_rechercher" aria-controls="recherche-bar" aria-expanded="false">🔍 Rechercher</button>
             <button id="btn-demander" data-i18n="btn_demander" type="button">🙋 Demander un service</button>
+            <button id="btn-contact" data-i18n="btn_contact" onclick="ouvrirContact()">📞 Nous contacter</button>
+            <span class="visiteurs">👥 <span id="txt-visites">Visiteurs : 0</span></span>
+
             <button id="btn-installer" type="button" hidden data-i18n="btn_installer">📲 Installer l'application</button>
-            <button id="btn-ouvrir-depot" data-i18n="btn_publier_top" onclick="ouvrirDepot()">
-                ➕ Publier
-            </button>
-
-            <span class="visiteurs">
-                👥 <span id="txt-visites">Visiteurs : 0</span>
-            </span>
-
-            <button id="btn-contact" data-i18n="btn_contact" onclick="ouvrirContact()">
-                📞 Nous contacter
-            </button>
-
             <!-- Visible UNIQUEMENT par l'admin connecté -->
-            <button id="btn-admin-panel" data-i18n="btn_admin" style="display:none;" onclick="ouvrirMenuAdmin()">
-                🔑 Admin
-            </button>
-
+            <button id="btn-admin-panel" data-i18n="btn_admin" style="display:none;" onclick="ouvrirMenuAdmin()">🔑 Admin</button>
             <span id="label-user-connecte"></span>
-
-            <button id="btn-logout" data-i18n="btn_logout" style="display:none;" onclick="deconnexion()">
-                Déconnexion
-            </button>
+            <button id="btn-logout" data-i18n="btn_logout" style="display:none;" onclick="deconnexion()">Déconnexion</button>
         </div>
     </div>
 
@@ -127,9 +118,6 @@
             <button type="button" class="categorie-btn" data-categorie="Formation" aria-pressed="false">🎓 Formation</button>
             <button type="button" class="categorie-btn" data-categorie="Commerce" aria-pressed="false">🛒 Commerce</button>
             <button type="button" class="categorie-btn" data-categorie="Infos pratiques" aria-pressed="false">ℹ️ Infos pratiques</button>
-
-            <!-- Bouton Rechercher (à droite de « Autres ») -->
-            <button type="button" class="btn-rechercher-cat" id="btn-rechercher" data-i18n="btn_rechercher" aria-controls="recherche-bar" aria-expanded="false">🔍 Rechercher</button>
 
             <!-- Icône pour actualiser la page -->
             <button type="button" class="btn-actualiser" id="btn-actualiser" title="Actualiser la page" aria-label="Actualiser la page">🔄</button>
