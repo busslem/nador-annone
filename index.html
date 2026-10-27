@@ -6,16 +6,17 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' data: blob: https://*.supabase.co wss://*.supabase.co https://api.mymemory.translated.net; object-src 'none'; base-uri 'self'; form-action 'self'">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <script>if (window.top !== window.self) { try { window.top.location = window.self.location; } catch (e) { document.documentElement.style.display = "none"; } }</script>
-    <title>Nador-Service</title>
+    <title>NadorService</title>
+    <script>window.__invite = null; addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); window.__invite = e; document.dispatchEvent(new Event("invite-prete")); });</script>
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Poppins:wght@500;600&family=Caveat:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800&family=Cormorant+Garamond:ital,wght@1,600;1,700&family=Poppins:wght@500;600&display=swap" rel="stylesheet">
     <link rel="manifest" href="manifest.webmanifest">
     <meta name="theme-color" content="#0e5a74">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-title" content="Nador-Service">
+    <meta name="apple-mobile-web-app-title" content="NadorService">
     <link rel="apple-touch-icon" href="icon-192.png">
 </head>
 <body>
@@ -27,47 +28,48 @@
         <div class="header-container">
             <div class="logo-container">
                 <div class="title-row">
+                    <img class="brand-logo" src="logo-nador.png" alt="" width="84" height="84">
                     <h1 class="brand-title">
-                        <span class="brand-primary">Nador</span><span class="brand-accent">-Service</span>
-                        
-                        <!-- Le micro est placé UNIQUEMENT ici (à gauche) -->
-                        <svg class="mic-icon-title" viewBox="0 0 64 64" width="40" height="40" aria-hidden="true">
-                            <defs>
-                                <linearGradient id="gm-title" x1="0" y1="0" x2="1" y2="1">
-                                    <stop offset="0" stop-color="#f59e0b"/>
-                                    <stop offset="1" stop-color="#ef4444"/>
-                                </linearGradient>
-                            </defs>
-                            <circle class="mic-ring r1" cx="32" cy="28" r="14" fill="none" stroke="#60a5fa" stroke-width="2"/>
-                            <circle class="mic-ring r2" cx="32" cy="28" r="14" fill="none" stroke="#60a5fa" stroke-width="2"/>
-                            <rect x="23" y="8" width="18" height="30" rx="9" fill="url(#gm-title)"/>
-                            <path d="M16 30a16 16 0 0 0 32 0M32 46v10M22 56h20" fill="none" stroke="#e2e8f0" stroke-width="3.5" stroke-linecap="round"/>
-                            <path d="M27 16h10M27 22h10M27 28h10" stroke="#fff" stroke-opacity=".55" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
+                        <span class="brand-primary">Nador</span><span class="brand-accent">Service</span>
                     </h1>
                 </div>
                 <p class="brand-tagline" data-i18n="tagline">Votre portail des services, annonces, publicités et opportunités à Nador et sa région</p>
             </div>
-            <p class="header-slogan" aria-hidden="true">Nador,<br>notre ville,<br>notre site !</p>
         </div>
 
         <!-- Bande d'actions -->
     </header>
 
-    <!-- NOUVELLE BANDE : LANGUES À GAUCHE / ACTIONS À DROITE -->
+    <!-- BANDE : MENU + LANGUES À GAUCHE / ACTIONS À DROITE (une seule ligne, défilement horizontal si l'écran est étroit) -->
     <div class="nouvelle-bande">
-        <!-- Langues à gauche -->
-        <div class="lang-bar" id="lang-bar">
-            <button type="button" class="lang-globe" id="lang-globe" aria-haspopup="true" aria-expanded="false" title="Langue / Language / اللغة">🌐</button>
-            <div class="lang-abbr">
-                <button type="button" data-lang="fr" onclick="changerLangue('fr')">Fr</button>
-                <button type="button" data-lang="en" onclick="changerLangue('en')">En</button>
-                <button type="button" data-lang="ar" onclick="changerLangue('ar')">Ar</button>
+        <div class="bande-gauche">
+            <!-- Menu -->
+            <div class="menu-site-wrap" id="menu-site-wrap">
+                <button type="button" class="btn-menu" id="btn-menu" aria-haspopup="true" aria-expanded="false" aria-controls="menu-site" aria-label="Menu" title="Menu">
+                    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+                </button>
+                <div class="menu-site" id="menu-site" role="menu" hidden>
+                    <button type="button" role="menuitem" class="menu-item" id="btn-infos" data-i18n="btn_infos">ℹ️ Infos pratiques</button>
+                    <button type="button" role="menuitem" class="menu-item" id="btn-installer" hidden data-i18n="btn_installer">📲 Installer l'application</button>
+                    <button type="button" role="menuitem" class="menu-item" id="btn-apropos" data-i18n="btn_apropos">🏙️ Qui sommes-nous</button>
+                    <button type="button" role="menuitem" class="menu-item" id="btn-contact" data-i18n="btn_contact" onclick="ouvrirContact()">✉️ Nous contacter</button>
+                    <button type="button" role="menuitem" class="menu-item" id="btn-legal" data-i18n="btn_legal">⚖️ Confidentialité</button>
+                </div>
             </div>
-            <div class="lang-menu" id="lang-menu" role="menu" hidden>
-                <button type="button" role="menuitem" data-lang="fr" onclick="changerLangue('fr')">Français</button>
-                <button type="button" role="menuitem" data-lang="en" onclick="changerLangue('en')">English</button>
-                <button type="button" role="menuitem" data-lang="ar" onclick="changerLangue('ar')">العربية</button>
+
+            <!-- Langues -->
+            <div class="lang-bar" id="lang-bar">
+                <button type="button" class="lang-globe" id="lang-globe" aria-haspopup="true" aria-expanded="false" title="Langue / Language / اللغة">🌐</button>
+                <div class="lang-abbr">
+                    <button type="button" data-lang="fr" onclick="changerLangue('fr')">Fr</button>
+                    <button type="button" data-lang="en" onclick="changerLangue('en')">En</button>
+                    <button type="button" data-lang="ar" onclick="changerLangue('ar')">Ar</button>
+                </div>
+                <div class="lang-menu" id="lang-menu" role="menu" hidden>
+                    <button type="button" role="menuitem" data-lang="fr" onclick="changerLangue('fr')">Français</button>
+                    <button type="button" role="menuitem" data-lang="en" onclick="changerLangue('en')">English</button>
+                    <button type="button" role="menuitem" data-lang="ar" onclick="changerLangue('ar')">العربية</button>
+                </div>
             </div>
         </div>
 
@@ -77,10 +79,7 @@
             <button id="btn-ouvrir-depot" data-i18n="btn_publier_top" onclick="ouvrirDepot()">➕ Publier</button>
             <button type="button" id="btn-rechercher" data-i18n="btn_rechercher" aria-controls="recherche-bar" aria-expanded="false">🔍 Rechercher</button>
             <button id="btn-demander" data-i18n="btn_demander" type="button">🙋 Demander un service</button>
-            <button id="btn-contact" data-i18n="btn_contact" onclick="ouvrirContact()">📞 Nous contacter</button>
             <span class="visiteurs">👥 <span id="txt-visites">Visiteurs : 0</span></span>
-
-            <button id="btn-installer" type="button" hidden data-i18n="btn_installer">📲 Installer l'application</button>
             <!-- Visible UNIQUEMENT par l'admin connecté -->
             <button id="btn-admin-panel" data-i18n="btn_admin" style="display:none;" onclick="ouvrirMenuAdmin()">🔑 Admin</button>
             <span id="label-user-connecte"></span>
@@ -117,7 +116,7 @@
             <button type="button" class="categorie-btn" data-categorie="Logement" aria-pressed="false">🏠 Logement</button>
             <button type="button" class="categorie-btn" data-categorie="Formation" aria-pressed="false">🎓 Formation</button>
             <button type="button" class="categorie-btn" data-categorie="Commerce" aria-pressed="false">🛒 Commerce</button>
-            <button type="button" class="categorie-btn" data-categorie="Infos pratiques" aria-pressed="false">ℹ️ Infos pratiques</button>
+            <button type="button" class="categorie-btn" data-categorie="Autres" aria-pressed="false">📦 Autres</button>
 
             <!-- Icône pour actualiser la page -->
             <button type="button" class="btn-actualiser" id="btn-actualiser" title="Actualiser la page" aria-label="Actualiser la page">🔄</button>
@@ -259,9 +258,7 @@
                         <label data-i18n="lbl_ville">Ville *</label>
                         <select id="dep-ville" required></select>
                     </div>
-                    <div class="form-group"><label data-i18n="lbl_region">Région</label><select id="dep-region"></select></div>
                     <div class="form-group"><label data-i18n="lbl_quartier">Quartier</label><input type="text" id="dep-quartier" maxlength="80"></div>
-                    <div class="form-group"><label data-i18n="lbl_secteur">Secteur / domaine</label><input type="text" id="dep-secteur" maxlength="80"></div>
                     <div class="form-group">
                         <label data-i18n="lbl_prix">Prix (Optionnel)</label>
                         <input type="number" id="dep-prix" min="0">
@@ -365,7 +362,25 @@
         </div>
     </dialog>
 
-    <footer class="pied"><a href="confidentialite.html" data-i18n="lien_confid">Politique de confidentialité</a> · <span>Nador-Service</span></footer>
+    <!-- Qui sommes-nous -->
+    <dialog id="modal-apropos">
+        <div class="modal-content texte-long">
+            <span class="close-btn" onclick="fermerModal('modal-apropos')">&times;</span>
+            <h3 id="apropos-titre"></h3>
+            <div id="apropos-corps"></div>
+        </div>
+    </dialog>
+
+    <!-- Confidentialité, lois, éthique et conditions d'utilisation -->
+    <dialog id="modal-legal">
+        <div class="modal-content texte-long">
+            <span class="close-btn" onclick="fermerModal('modal-legal')">&times;</span>
+            <h3 id="legal-titre"></h3>
+            <div id="legal-corps"></div>
+        </div>
+    </dialog>
+
+    <footer class="pied"><a href="confidentialite.html" data-i18n="lien_confid">Politique de confidentialité</a> · <span>NadorService</span></footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
     <script src="app.js"></script>

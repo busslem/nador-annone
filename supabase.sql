@@ -12,6 +12,7 @@
 -- 1. Nouvelle catégorie principale « Logement » (les anciennes annonces « Immobilier » y sont rattachées par le site)
 --    Les colonnes slug, nom_en et nom_ar sont obligatoires dans votre table categories.
 insert into categories (slug, nom_fr, nom_en, nom_ar) select 'logement', 'Logement', 'Housing', 'سكن' where not exists (select 1 from categories where nom_fr = 'Logement' or slug = 'logement');
+insert into categories (slug, nom_fr, nom_en, nom_ar) select 'autres', 'Autres', 'Other', 'أخرى' where not exists (select 1 from categories where nom_fr = 'Autres' or slug = 'autres');
 
 -- 2. Nouveaux champs : localisation fine et caractéristiques (prix, marque, kilométrage, chambres…)
 alter table annonces add column if not exists quartier text;
