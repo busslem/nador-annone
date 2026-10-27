@@ -188,7 +188,10 @@ ajoutTrad("contact_wa", "💬 Envoyer par WhatsApp", "💬 Send via WhatsApp", "
 ajoutTrad("contact_mail", "📧 Envoyer par e-mail", "📧 Send by e-mail", "📧 إرسال عبر البريد الإلكتروني");
 ajoutTrad("contact_tel", "📞 Appeler", "📞 Call", "📞 اتصال");
 ajoutTrad("contact_vide", "Les coordonnées de contact seront bientôt disponibles.", "Contact details will be available soon.", "ستتوفر بيانات الاتصال قريبا.");
-ajoutTrad("contact_sujet", "Message depuis Nador-Service", "Message from Nador-Service", "رسالة من Nador-Service");
+ajoutTrad("contact_sujet", "Message depuis NadorService", "Message from NadorService", "رسالة من NadorService");
+ajoutTrad("btn_apropos", "🏙️ Qui sommes-nous", "🏙️ About us", "🏙️ من نحن");
+ajoutTrad("btn_legal", "⚖️ Politique de confidentialité", "⚖️ Privacy policy", "⚖️ سياسة الخصوصية");
+ajoutTrad("btn_infos", "ℹ️ Infos pratiques", "ℹ️ Useful info", "ℹ️ معلومات مفيدة");
 ajoutTrad("lbl_souscat", "Sous-catégorie (facultatif)", "Subcategory (optional)", "الفئة الفرعية (اختياري)");
 ajoutTrad("sous_aucune", "— Aucune —", "— None —", "— لا شيء —");
 ajoutTrad("sous_tout", "Toute la catégorie", "Whole category", "كل الفئة");
@@ -764,6 +767,14 @@ function brancherRecherche() {
     champ.addEventListener("input", majRecherche);
     champ.addEventListener("keydown", e => { if (e.key === "Escape") basculerBarre(false); });
     effacer.addEventListener("click", () => { champ.value = ""; majRecherche(); champ.focus(); });
+    // Un clic ailleurs (hors barre, hors bouton Rechercher, hors liste d'annonces) ferme la recherche
+    document.addEventListener("click", e => {
+        if (barre.hidden) return;
+        const t = e.target;
+        if (!(t instanceof Element) || !t.isConnected) return;
+        if (barre.contains(t) || ouvrir.contains(t) || t.closest("#grille-annonces")) return;
+        basculerBarre(false);
+    });
 }
 
 function choisirCategorie(cle, sous) {
@@ -1819,7 +1830,7 @@ $("form-deposer").addEventListener("submit", async e => {
             titre: $("dep-titre").value.trim(), description: $("dep-description").value.trim(),
             ville: $("dep-ville").value, prix: prix ? parseFloat(prix) : null,
             telephone: $("dep-telephone").value.trim(), localisation: $("dep-localisation").value.trim(),
-            quartier: $("dep-quartier").value.trim(), region: $("dep-region").value, secteur: $("dep-secteur").value.trim(),
+            quartier: $("dep-quartier").value.trim(),
             attributs: window.lireAttributsDepot ? window.lireAttributsDepot() : {}
         };
         if ($("dep-souscat").value) ligne.sous_categorie = $("dep-souscat").value;
@@ -1895,11 +1906,11 @@ Object.assign(SOUS_CATS, {
  "formation": [["Cours particuliers","Private lessons","دروس خصوصية"],["Langues","Languages","لغات"],["Informatique","Computing","معلوميات"],["Formation professionnelle","Vocational training","تكوين مهني"]],
  "commerce": [["Mode et vêtements","Fashion & clothing","أزياء وملابس"],["Maison et meubles","Home & furniture","منزل وأثاث"],["Électroménager","Appliances","أجهزة كهرومنزلية"],["Alimentation","Food","مواد غذائية"],["Artisanat","Crafts","حِرَف تقليدية"],["Voitures","Cars","سيارات"],["Motos","Motorbikes","دراجات نارية"],["Camions et utilitaires","Trucks & vans","شاحنات وسيارات نفعية"],["Pièces et accessoires","Parts & accessories","قطع غيار وإكسسوارات"],["Vélos","Bikes","دراجات هوائية"],["Téléphones","Phones","هواتف"],["Ordinateurs","Computers","حواسيب"],["Tablettes","Tablets","أجهزة لوحية"],["Accessoires","Accessories","إكسسوارات"]]
 });
-CATS_CONNUES.length = 0; CATS_CONNUES.push("services", "logement", "formation", "commerce", "infos pratiques");
-Object.assign(ALIAS_CATS, { "immobilier": "logement", "vehicules": "commerce", "telephones et informatique": "commerce", "emploi": "services", "autres": "services", "divers": "services" });
+CATS_CONNUES.length = 0; CATS_CONNUES.push("services", "logement", "formation", "commerce", "autres", "infos pratiques");
+Object.assign(ALIAS_CATS, { "immobilier": "logement", "vehicules": "commerce", "telephones et informatique": "commerce", "emploi": "services", "divers": "autres" });
 Object.assign(CATS_AFFICHAGE.fr, { logement: "Logement" }); Object.assign(CATS_AFFICHAGE.en, { logement: "Housing" }); Object.assign(CATS_AFFICHAGE.ar, { logement: "سكن" });
 ICONES_CATS.logement = "🏠";
-const CAT_ORDRE = [["Services", "services"], ["Logement", "logement"], ["Formation", "formation"], ["Commerce", "commerce"], ["Infos pratiques", "infos pratiques"]];
+const CAT_ORDRE = [["Services", "services"], ["Logement", "logement"], ["Formation", "formation"], ["Commerce", "commerce"], ["Autres", "autres"]];
 
 /* Sous-panneau : colonne claire à droite de la catégorie */
 const _menu = ouvrirMenuSousCat;
@@ -1971,8 +1982,6 @@ function majCatDepot() {
     const s = $q("dep-categorie"), v = s.value;
     s.innerHTML = `<option value="">${T("— Choisir —", "— Choose —", "— اختر —")}</option>` + CAT_ORDRE.map(([n, k]) => `<option value="${n}">${esc(CATS_AFFICHAGE[langueActuelle][k])}</option>`).join("");
     s.value = v;
-    const r = $q("dep-region"), rv = r.value;
-    r.innerHTML = `<option value="">${T("— Choisir —", "— Choose —", "— اختر —")}</option>` + REGIONS.map(x => `<option>${esc(x)}</option>`).join(""); r.value = rv;
 }
 ["dep-categorie", "dep-souscat"].forEach(id => $q(id).addEventListener("change", rendreChampsDepot));
 $q("form-deposer").addEventListener("reset", () => setTimeout(() => { rendreChampsDepot(); majSousCatDepot(); }, 0));
@@ -2181,14 +2190,26 @@ cam.onchange = () => {
 };
 
 /* ===== 4. Application installable (PWA) ===== */
-let invite = null;
+let invite = window.__invite || null;
 const btnInst = $q("btn-installer"), ios = /iphone|ipad|ipod/i.test(navigator.userAgent), autonome = matchMedia("(display-mode: standalone)").matches || navigator.standalone;
-addEventListener("beforeinstallprompt", e => { e.preventDefault(); invite = e; if (!autonome) btnInst.hidden = false; });
-addEventListener("appinstalled", () => { btnInst.hidden = true; });
+document.addEventListener("invite-prete", () => { invite = window.__invite; });
+addEventListener("beforeinstallprompt", e => { e.preventDefault(); invite = window.__invite = e; });
+addEventListener("appinstalled", () => { invite = window.__invite = null; btnInst.hidden = true; });
 if (!autonome) btnInst.hidden = false;
 btnInst.addEventListener("click", async () => {
-    if (invite) { invite.prompt(); await invite.userChoice; invite = null; btnInst.hidden = true; }
-    else alert(ios ? T("Sur iPhone : touchez « Partager » puis « Sur l'écran d'accueil ».", "On iPhone: tap “Share” then “Add to Home Screen”.", "على آيفون: اضغط «مشاركة» ثم «إضافة إلى الشاشة الرئيسية».") : T("Ouvrez le menu du navigateur (⋮ ou l'icône d'installation de la barre d'adresse), puis « Installer l'application » ou « Ajouter à l'écran d'accueil ».", "Open the browser menu (⋮ or the install icon in the address bar), then “Install app” or “Add to Home screen”.", "افتح قائمة المتصفح (⋮ أو أيقونة التثبيت في شريط العنوان) ثم اختر «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية»."));
+    invite = invite || window.__invite;
+    if (invite) {
+        try {
+            invite.prompt();
+            const choix = await invite.userChoice;
+            invite = window.__invite = null;          /* l'invite ne sert qu'une fois */
+            if (choix && choix.outcome === "accepted") btnInst.hidden = true;
+        } catch (err) { invite = window.__invite = null; }
+        return;
+    }
+    alert(ios
+        ? T("Sur iPhone : ouvrez le site dans Safari, touchez « Partager » puis « Sur l'écran d'accueil ».", "On iPhone: open the site in Safari, tap “Share” then “Add to Home Screen”.", "على آيفون: افتح الموقع في Safari ثم اضغط «مشاركة» ثم «إضافة إلى الشاشة الرئيسية».")
+        : T("Ouvrez le menu du navigateur (⋮ ou l'icône d'installation de la barre d'adresse), puis « Installer l'application » ou « Ajouter à l'écran d'accueil ». Si vous êtes dans Facebook ou Instagram, ouvrez d'abord le site dans Chrome.", "Open the browser menu (⋮ or the install icon in the address bar), then “Install app” or “Add to Home screen”. If you are inside Facebook or Instagram, open the site in Chrome first.", "افتح قائمة المتصفح (⋮ أو أيقونة التثبيت في شريط العنوان) ثم اختر «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية». إذا كنت داخل فيسبوك أو إنستغرام فافتح الموقع أولاً في Chrome."));
 });
 if ("serviceWorker" in navigator && /^https?:/.test(location.protocol)) navigator.serviceWorker.register("sw.js").catch(() => {});
 
@@ -2215,3 +2236,160 @@ changerLangue(langueActuelle);
     changerLangue = function (l) { _prec(l); marquer(); };
     marquer();
 })();
+
+
+/* ===== Menu ☰ : Qui sommes-nous, Nous contacter, Installer, Confidentialité ===== */
+const TEXTES_SITE = {
+    apropos: {
+        fr: { t: "🏙️ Qui sommes-nous", s: [
+            [null, "NadorService est le portail local de Nador et de sa région : un seul endroit pour trouver un service, publier ou consulter une annonce, faire connaître une activité et repérer les opportunités près de chez soi."],
+            ["Ce que vous y trouvez", "Des annonces classées par catégories (Services, Logement, Formation, Commerce, Autres), une bande Flash pour les nouvelles du moment, et, dans « Infos pratiques » du menu, des informations du quotidien : horaires de prière, météo, trains, pharmacies de garde et numéros utiles."],
+            ["Notre mission", "Rapprocher les habitants, les professionnels et les commerçants de la région, simplement et dans le respect de chacun."],
+            ["Nos engagements", "Un site simple, en français, en anglais et en arabe, utilisable sur téléphone et installable comme une application ; des annonces publiées dans le respect des lois et des personnes ; une protection sérieuse de vos données personnelles."],
+            ["Une question, une suggestion ?", "Écrivez-nous via « Nous contacter » dans le menu."]
+        ] },
+        en: { t: "🏙️ About us", s: [
+            [null, "NadorService is the local portal for Nador and its region: one place to find a service, post or browse ads, promote your business and spot opportunities near you."],
+            ["What you will find", "Ads sorted by category (Services, Housing, Training, Commerce, Other), a Flash band for the latest news, and, under “Useful info” in the menu, everyday information: prayer times, weather, trains, on-duty pharmacies and useful numbers."],
+            ["Our mission", "To bring the residents, professionals and shopkeepers of the region closer together, simply and with respect for everyone."],
+            ["Our commitments", "A simple site in French, English and Arabic that works on your phone and can be installed like an app; ads published in line with the law and with respect for people; serious protection of your personal data."],
+            ["A question or a suggestion?", "Write to us through “Contact us” in the menu."]
+        ] },
+        ar: { t: "🏙️ من نحن", s: [
+            [null, "NadorService هو البوابة المحلية للناظور وجهتها: مكان واحد للعثور على خدمة، ونشر الإعلانات أو تصفحها، والتعريف بنشاطك، واكتشاف الفرص القريبة منك."],
+            ["ما ستجده هنا", "إعلانات مصنفة (خدمات، سكن، تكوين، تجارة، أخرى)، وشريط «فلاش» لأخبار اللحظة، وفي «معلومات مفيدة» بالقائمة معلومات يومية: أوقات الصلاة والطقس والقطارات والصيدليات المناوبة وأرقام مفيدة."],
+            ["رسالتنا", "تقريب سكان الجهة ومهنييها وتجارها من بعضهم، ببساطة وباحترام الجميع."],
+            ["التزاماتنا", "موقع بسيط بالفرنسية والإنجليزية والعربية، يعمل على الهاتف ويمكن تثبيته كتطبيق؛ وإعلانات تُنشر في احترام القانون والأشخاص؛ وحماية جدية لبياناتك الشخصية."],
+            ["سؤال أو اقتراح؟", "راسلنا عبر «اتصل بنا» في القائمة."]
+        ] }
+    },
+    legal: {
+        fr: { t: "⚖️ Politique de confidentialité", s: [
+            [null, "La présente politique de confidentialité définit et informe les utilisateurs de la manière dont la plateforme NadorService utilise et protège les informations transmises lors de votre navigation et de l'utilisation de nos services."],
+            ["1. Données collectées", "Dans le cadre de la publication, de la recherche et de la consultation des annonces et services sur NadorService, nous sommes amenés à collecter les informations suivantes :"],
+            [null, "Informations de compte : nom, prénom, adresse e-mail, numéro de téléphone, ville ou secteur géographique, et mot de passe sécurisé."],
+            [null, "Contenu des annonces : intitulé du service, descriptions, photographies, localisation du bien ou de la prestation, tarifs et préférences de contact."],
+            [null, "Communications : messages échangés entre les utilisateurs de la plateforme via nos formulaires ou notre messagerie interne."],
+            [null, "Données de paiement : pour les options payantes d'affichage ou de mise en avant d'annonces, les transactions sont traitées par des prestataires de paiement sécurisés et agréés. NadorService ne conserve aucune donnée bancaire sur ses serveurs."],
+            [null, "Données techniques : adresse IP, type de navigateur, appareil utilisé et données de navigation nécessaires au bon fonctionnement du site."],
+            ["2. Finalités du traitement", "Les données collectées sur NadorService sont utilisées exclusivement pour :"],
+            [null, "Mettre en ligne, gérer et modérer vos annonces et offres de services."],
+            [null, "Faciliter la mise en relation directe entre les prestataires de services et leurs clients."],
+            [null, "Prévenir la fraude, lutter contre les fausses annonces et garantir la sécurité de l'ensemble des utilisateurs."],
+            [null, "Envoyer les notifications relatives à votre compte (confirmations, alertes d'annonces, messages)."],
+            [null, "Mesurer la fréquentation du site et optimiser l'expérience utilisateur."],
+            ["3. Partage et destinataires des données", "Vos informations personnelles ne sont ni vendues, ni louées, ni cédées à des tiers. Elles sont uniquement partagées dans les situations suivantes :"],
+            [null, "Informations publiques : les coordonnées que vous choisissez délibérément de rendre publiques sur vos annonces (numéro de téléphone, nom commercial, ville) sont accessibles aux visiteurs du site."],
+            [null, "Prestataires techniques : les sous-traitants techniques (hébergement web, solutions de paiement) interviennent uniquement dans la limite nécessaire à la fourniture du service."],
+            [null, "Obligations légales : sur réquisition légale des autorités administratives ou judiciaires compétentes."],
+            ["4. Durée de conservation des données", ""],
+            [null, "Comptes utilisateurs : les données sont conservées pendant toute la durée d'activité de votre compte, puis supprimées ou anonymisées après 3 ans d'inactivité continue."],
+            [null, "Annonces publiées : les informations relatives à une annonce sont conservées pendant la durée de sa publication, puis archivées conformément aux durées légales applicables."],
+            [null, "Données de facturation : les justificatifs de paiement des options payantes sont conservés conformément aux obligations comptables en vigueur."],
+            ["5. Sécurité des données", "NadorService met en œuvre des mesures de sécurité techniques et organisationnelles appropriées (chiffrement des données via certificat SSL/HTTPS, mots de passe hashés, accès restreint aux bases de données) afin de protéger vos données personnelles contre tout accès non autorisé, altération, divulgation ou destruction."],
+            ["6. Gestion des cookies", "Le site NadorService utilise des cookies essentiels au fonctionnement de la plateforme (maintien de session, sécurité) ainsi que des cookies de mesure d'audience anonymes. Vous pouvez à tout moment configurer votre navigateur pour refuser ou désactiver les cookies, bien que cela puisse restreindre l'accès à certaines fonctionnalités du site."],
+            ["7. Modifications de la politique", "NadorService se réserve le droit de modifier ou de mettre à jour la présente politique de confidentialité à tout moment afin de refléter les évolutions techniques ou légales. Toute mise à jour sera directement publiée sur cette page avec sa date d'effet."],
+            ["maj", "Dernière mise à jour : 28 octobre 2026"]
+        ] },
+        en: { t: "⚖️ Privacy policy", s: [
+            [null, "This privacy policy explains how the NadorService platform uses and protects the information sent while you browse and use our services."],
+            ["1. Data collected", "When you post, search or view ads and services on NadorService, we may collect the following information:"],
+            [null, "Account information: first and last name, e-mail address, phone number, city or area, and a secure password."],
+            [null, "Ad content: service title, descriptions, photos, location of the item or service, prices and contact preferences."],
+            [null, "Communications: messages exchanged between platform users through our forms or internal messaging."],
+            [null, "Payment data: for paid display or promotion options, transactions are handled by secure, approved payment providers. NadorService stores no banking data on its servers."],
+            [null, "Technical data: IP address, browser type, device used and browsing data needed for the site to work properly."],
+            ["2. Purposes of processing", "Data collected on NadorService is used exclusively to:"],
+            [null, "Publish, manage and moderate your ads and service offers."],
+            [null, "Make it easy for service providers and their customers to get in touch directly."],
+            [null, "Prevent fraud, fight fake ads and keep all users safe."],
+            [null, "Send notifications about your account (confirmations, ad alerts, messages)."],
+            [null, "Measure site traffic and improve the user experience."],
+            ["3. Sharing and recipients", "Your personal information is never sold, rented or handed over to third parties. It is shared only in the following cases:"],
+            [null, "Public information: the contact details you deliberately choose to make public in your ads (phone number, business name, city) are visible to visitors."],
+            [null, "Technical providers: technical subcontractors (web hosting, payment solutions) act only as far as needed to provide the service."],
+            [null, "Legal obligations: upon lawful request by the competent administrative or judicial authorities."],
+            ["4. Data retention", ""],
+            [null, "User accounts: data is kept for as long as your account is active, then deleted or anonymised after 3 years of continuous inactivity."],
+            [null, "Published ads: ad information is kept while the ad is online, then archived in line with applicable legal periods."],
+            [null, "Billing data: proof of payment for paid options is kept in accordance with current accounting obligations."],
+            ["5. Data security", "NadorService applies appropriate technical and organisational security measures (data encryption via SSL/HTTPS certificate, hashed passwords, restricted access to databases) to protect your personal data against unauthorised access, alteration, disclosure or destruction."],
+            ["6. Cookies", "NadorService uses cookies that are essential to the platform (session, security) as well as anonymous audience-measurement cookies. You can set your browser at any time to refuse or disable cookies, although this may limit access to some features."],
+            ["7. Changes to this policy", "NadorService reserves the right to change or update this privacy policy at any time to reflect technical or legal developments. Any update will be published on this page with its effective date."],
+            ["maj", "Last updated: 28 October 2026"]
+        ] },
+        ar: { t: "⚖️ سياسة الخصوصية", s: [
+            [null, "تحدد سياسة الخصوصية هذه للمستخدمين كيفية استعمال منصة NadorService وحمايتها للمعلومات المرسلة أثناء تصفحكم واستعمالكم لخدماتنا."],
+            ["1. المعطيات المجمّعة", "في إطار نشر الإعلانات والخدمات والبحث فيها وتصفحها على NadorService، قد نجمع المعلومات التالية:"],
+            [null, "معلومات الحساب: الاسم الشخصي والعائلي، البريد الإلكتروني، رقم الهاتف، المدينة أو المنطقة، وكلمة مرور آمنة."],
+            [null, "محتوى الإعلانات: عنوان الخدمة، الوصف، الصور، موقع الملك أو الخدمة، الأسعار وتفضيلات التواصل."],
+            [null, "المراسلات: الرسائل المتبادلة بين مستعملي المنصة عبر نماذجنا أو مراسلتنا الداخلية."],
+            [null, "بيانات الأداء: بالنسبة للخيارات المدفوعة لعرض الإعلانات أو إبرازها، تعالج المعاملات عبر مزودي دفع آمنين ومعتمدين. لا يحتفظ NadorService بأي معطيات بنكية على خوادمه."],
+            [null, "المعطيات التقنية: عنوان IP ونوع المتصفح والجهاز المستعمل وبيانات التصفح اللازمة لحسن سير الموقع."],
+            ["2. أغراض المعالجة", "تُستعمل المعطيات المجمّعة على NadorService حصرا من أجل:"],
+            [null, "نشر إعلاناتك وعروض خدماتك وتدبيرها ومراقبتها."],
+            [null, "تسهيل التواصل المباشر بين مقدمي الخدمات وزبنائهم."],
+            [null, "منع الاحتيال ومحاربة الإعلانات الزائفة وضمان أمن جميع المستعملين."],
+            [null, "إرسال الإشعارات المتعلقة بحسابك (تأكيدات، تنبيهات الإعلانات، الرسائل)."],
+            [null, "قياس عدد الزيارات وتحسين تجربة المستعمل."],
+            ["3. تقاسم المعطيات والمستفيدون منها", "لا تُباع معلوماتك الشخصية ولا تُكرى ولا تُحال إلى أطراف ثالثة. ولا تُتقاسم إلا في الحالات التالية:"],
+            [null, "المعلومات العامة: بيانات الاتصال التي تختار عمدا جعلها علنية في إعلاناتك (رقم الهاتف، الاسم التجاري، المدينة) يمكن لزوار الموقع الاطلاع عليها."],
+            [null, "المزودون التقنيون: يتدخل المناولون التقنيون (الاستضافة، حلول الدفع) في حدود ما يلزم لتقديم الخدمة فقط."],
+            [null, "الالتزامات القانونية: بناء على طلب قانوني من السلطات الإدارية أو القضائية المختصة."],
+            ["4. مدة الاحتفاظ بالمعطيات", ""],
+            [null, "حسابات المستعملين: تُحفظ المعطيات طوال مدة نشاط حسابك، ثم تُحذف أو تُجهّل بعد 3 سنوات من الخمول المتواصل."],
+            [null, "الإعلانات المنشورة: تُحفظ معلومات الإعلان طوال مدة نشره، ثم تُؤرشف وفق المدد القانونية المعمول بها."],
+            [null, "معطيات الفوترة: تُحفظ وثائق أداء الخيارات المدفوعة وفق الالتزامات المحاسبية الجاري بها العمل."],
+            ["5. أمن المعطيات", "يطبق NadorService تدابير أمنية تقنية وتنظيمية ملائمة (تشفير المعطيات عبر شهادة SSL/HTTPS، تشفير كلمات المرور، تقييد الولوج إلى قواعد البيانات) لحماية معطياتك الشخصية من كل ولوج غير مرخص أو تغيير أو إفشاء أو إتلاف."],
+            ["6. ملفات تعريف الارتباط", "يستعمل موقع NadorService ملفات تعريف الارتباط الضرورية لعمل المنصة (الحفاظ على الجلسة، الأمن) وكذا ملفات مجهولة لقياس الجمهور. يمكنك في أي وقت ضبط متصفحك لرفضها أو تعطيلها، وإن كان ذلك قد يقيد الوصول إلى بعض الميزات."],
+            ["7. تعديل السياسة", "يحتفظ NadorService بالحق في تعديل سياسة الخصوصية هذه أو تحديثها في أي وقت لتواكب المستجدات التقنية أو القانونية. وسيُنشر كل تحديث مباشرة في هذه الصفحة مع تاريخ سريانه."],
+            ["maj", "آخر تحديث: 28 أكتوبر 2026"]
+        ] }
+    }
+};
+
+function ouvrirTexte(cle) {
+    const d = TEXTES_SITE[cle], l = d[langueActuelle] || d.fr;
+    $(cle + "-titre").textContent = l.t;
+    const corps = $(cle + "-corps");
+    corps.innerHTML = "";
+    l.s.forEach(([h, texte]) => {
+        if (h && h !== "maj") { const e = document.createElement("h4"); e.textContent = h; corps.appendChild(e); }
+        if (!texte) return;
+        const p = document.createElement("p");
+        if (h === "maj") p.className = "maj";
+        p.textContent = texte;
+        corps.appendChild(p);
+    });
+    $("modal-" + cle).showModal();
+}
+
+(function () {
+    const btn = $("btn-menu"), menu = $("menu-site");
+    if (!btn || !menu) return;
+    const fermer = () => { menu.hidden = true; btn.setAttribute("aria-expanded", "false"); };
+    btn.addEventListener("click", () => { const ouvrir = menu.hidden; menu.hidden = !ouvrir; btn.setAttribute("aria-expanded", String(ouvrir)); });
+    document.addEventListener("click", e => {
+        if (menu.hidden) return;
+        if (!e.target.closest("#menu-site-wrap") || e.target.closest("#menu-site button")) fermer();
+    });
+    document.addEventListener("keydown", e => { if (e.key === "Escape") fermer(); });
+    $("btn-infos").addEventListener("click", () => {
+        if (typeof detailOuvert !== "undefined" && detailOuvert) fermerPageDetail();
+        choisirCategorie("infos pratiques");
+        const z = $("infos-pratiques"); if (z && !z.hidden) z.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    $("btn-apropos").addEventListener("click", () => ouvrirTexte("apropos"));
+    $("btn-legal").addEventListener("click", () => ouvrirTexte("legal"));
+})();
+
+/* Fermer « Qui sommes-nous » et « Politique de confidentialité » en cliquant en dehors de la fenêtre */
+["modal-apropos", "modal-legal"].forEach(id => {
+    const d = $(id);
+    if (!d) return;
+    d.addEventListener("click", e => {
+        const r = d.getBoundingClientRect();
+        const dedans = e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
+        if (!dedans) d.close();
+    });
+});
