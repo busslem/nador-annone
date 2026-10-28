@@ -2228,6 +2228,11 @@ addEventListener("appinstalled", () => { invite = window.__invite = null; btnIns
 if (!autonome) btnInst.hidden = false;
 btnInst.addEventListener("click", async () => {
     invite = invite || window.__invite;
+    /* L'invitation du navigateur peut arriver quelques instants après le chargement : on l'attend jusqu'à 3 s avant d'afficher l'aide */
+    if (!invite && !ios) {
+        await new Promise(fin => { const ok = () => fin(); document.addEventListener("invite-prete", ok, { once: true }); setTimeout(ok, 3000); });
+        invite = window.__invite || invite;
+    }
     if (invite) {
         try {
             invite.prompt();
