@@ -726,7 +726,7 @@ const nomCategorie = c => langueActuelle === "fr" ? c : (CATS_AFFICHAGE[langueAc
 function majTitresCategories() {
     document.querySelectorAll(".categorie-btn").forEach(b => {
         const cle = b.dataset.categorie === "toutes" ? "toutes" : cleCategorie(b.dataset.categorie);
-        const libelle = ICONES_CATS[cle] + " " + CATS_AFFICHAGE[langueActuelle][cle];
+        const libelle = CATS_AFFICHAGE[langueActuelle][cle];
         const n = b.firstChild;
         if (n && n.nodeType === 3) n.nodeValue = libelle;
         else b.insertBefore(document.createTextNode(libelle), b.firstChild);
@@ -804,6 +804,7 @@ function majFleches() {
         f.title = t("sous_aria");
         f.textContent = "\u25BE";
         b.appendChild(f);
+        b.classList.add("a-sous");
     });
 }
 
@@ -2429,12 +2430,17 @@ function ouvrirTexte(cle) {
     new MutationObserver(maj).observe(bar, { childList: true, characterData: true, subtree: true });
 })();
 
-/* Téléphone : le menu ☰ se place juste sous « Toutes » ; sur grand écran il reste dans la bande du haut */
+/* Téléphone : le menu ☰ se place dans la ligne des catégories, juste à gauche de « Services » ; sur grand écran il reste dans la bande du haut */
 (function () {
-    const wrap = document.getElementById("menu-site-wrap"), zone = document.getElementById("zone-menu-tel"), gauche = document.querySelector(".bande-gauche");
-    if (!wrap || !zone || !gauche) return;
+    const wrap = document.getElementById("menu-site-wrap"), gauche = document.querySelector(".bande-gauche"), cats = document.querySelector(".categories-container");
+    if (!wrap || !gauche || !cats) return;
     const mq = window.matchMedia("(max-width: 600px)");
-    const placer = () => { if (mq.matches) zone.appendChild(wrap); else gauche.insertBefore(wrap, gauche.firstChild); };
+    const placer = () => {
+        if (mq.matches) {
+            const services = cats.querySelector('.categorie-btn[data-categorie="Services"]');
+            cats.insertBefore(wrap, services || (cats.firstElementChild ? cats.firstElementChild.nextSibling : null));
+        } else gauche.insertBefore(wrap, gauche.firstChild);
+    };
     placer();
     if (mq.addEventListener) mq.addEventListener("change", placer); else mq.addListener(placer);
 })();

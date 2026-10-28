@@ -1427,3 +1427,40 @@ html.souscat-ouvert, html.souscat-ouvert body { overflow: hidden; }
 @media (max-width: 600px) {
     .categorie-btn .cat-arrow { width: 17px; height: 17px; font-size: 10px; top: -6px; }
 }
+
+/* =====================================================================
+   20. CATÉGORIES : sans symboles, flèches gris foncé en bas à droite, menu ☰ à gauche de « Services »
+   ===================================================================== */
+.categories-container { align-items: stretch; overflow-y: hidden; }
+.categorie-btn { position: relative; justify-content: center; }
+.categorie-btn.a-sous { padding-bottom: 1.45em; }
+.categorie-btn .cat-arrow,
+.categorie-btn:hover .cat-arrow,
+.categorie-btn.active .cat-arrow,
+.categorie-btn.active:hover .cat-arrow {
+    position: absolute; top: auto; bottom: 3px; inset-inline-end: 4px;
+    width: 1.35em; height: 1.35em; margin: 0; font-size: 0.85em;
+    background: #475569; color: #fff; border: 1.5px solid #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+.categorie-btn .cat-arrow:hover, .categorie-btn .cat-arrow.ouvert { background: #1e293b; color: #fff; }
+.categorie-btn.active .cat-arrow.ouvert { background: #1e293b; color: #fff; border-color: #fff; }
+
+@media (max-width: 600px) {
+    .categories-container { align-items: stretch; padding: 2px 6px 4px; gap: 0.3em; }
+    .categorie-btn { padding: 0.45em 0.3em; }
+    .categorie-btn.a-sous { padding-bottom: 1.6em; }
+    .categorie-btn .cat-arrow,
+    .categorie-btn:hover .cat-arrow,
+    .categorie-btn.active .cat-arrow,
+    .categorie-btn.active:hover .cat-arrow {
+        top: auto; bottom: 2px; inset-inline-end: 2px;
+        width: 15px; height: 15px; font-size: 9px;
+    }
+    /* Menu ☰ dans la ligne, entre « Toutes » et « Services » */
+    .categories-container > .menu-site-wrap { position: static; flex: 0 0 auto; align-self: center; }
+    .categories-container > .menu-site-wrap .btn-menu { width: 30px; height: 30px; border-radius: 7px; }
+    .categories-container > .menu-site-wrap .btn-menu svg { width: 18px; height: 18px; }
+    .categories-bar { position: relative; }
+    .categories-bar .menu-site { top: calc(100% + 4px); inset-inline-start: 8px; width: min(270px, calc(100vw - 16px)); }
+}
