@@ -332,13 +332,18 @@ async function traduireMorceau(txt, src, cible) {
     const ctrl = new AbortController();
     const minuteur = setTimeout(() => ctrl.abort(), 10000);
     try {
+        /* Glossaire : « مجزرة » = boucherie (et non « massacre ») */
+        const aCorriger = src === "ar" && /مجزر[ةه]/.test(txt);
+        if (aCorriger) txt = txt.replace(/(ال)?مجزر[ةه]/g, "$1جزارة");
         const url = "https://api.mymemory.translated.net/get?q=" + encodeURIComponent(txt) + "&langpair=" + src + "|" + cible;
         const rep = await fetch(url, { signal: ctrl.signal });
         if (!rep.ok) return null;
         const j = await rep.json();
         const res = j && j.responseData && j.responseData.translatedText;
         if (Number(j.responseStatus) !== 200 || !res || /MYMEMORY WARNING|INVALID|QUERY LENGTH LIMIT/i.test(res)) return null;
-        return decoderHTML(res);
+        let sortie = decoderHTML(res);
+        if (aCorriger) sortie = sortie.replace(/\b(massacres?|carnage|slaughterhouses?|abattoirs?)\b/gi, m => { const r = cible === "fr" ? "boucherie" : "butcher shop"; return m[0] === m[0].toUpperCase() ? r[0].toUpperCase() + r.slice(1) : r; });
+        return sortie;
     } catch (e) {
         return null;
     } finally {
@@ -349,7 +354,7 @@ async function traduireMorceau(txt, src, cible) {
 /* Traduction déjà connue (immédiate) ou null */
 function traductionCachee(texte, cible) {
     if (!String(texte || "").trim() || langueDuTexte(texte) === cible) return null;
-    const v = cacheTrad.get(cible + "|" + hashTexte(texte));
+    const v = cacheTrad.get("v2|" + cible + "|" + hashTexte(texte));
     return v === undefined ? null : v;
 }
 
@@ -359,7 +364,7 @@ function traduireTexte(texte, cible) {
     if (!texte.trim()) return Promise.resolve(null);
     const src = langueDuTexte(texte);
     if (src === cible) return Promise.resolve(null);
-    const cle = cible + "|" + hashTexte(texte);
+    const cle = "v2|" + cible + "|" + hashTexte(texte);
     if (cacheTrad.has(cle)) return Promise.resolve(cacheTrad.get(cle));
     if (enCoursTrad.has(cle)) return enCoursTrad.get(cle);
     if (Date.now() < pauseTradJusqua) { echecTrad = true; return Promise.resolve(null); }
