@@ -1675,3 +1675,17 @@ html.souscat-ouvert, html.souscat-ouvert body { overflow: hidden; }
     .categorie-btn.active .cat-arrow,
     .categorie-btn.active:hover .cat-arrow { position: static !important; width: 16px; height: 16px; font-size: 8px; margin: 0; }
 }
+
+/* Flèche des sous-catégories : petite, grise claire, sans cercle ni fond */
+.categorie-btn .cat-arrow,
+.categorie-btn:hover .cat-arrow,
+.categorie-btn.active .cat-arrow,
+.categorie-btn.active:hover .cat-arrow,
+.categorie-btn .cat-arrow:hover,
+.categorie-btn .cat-arrow.ouvert,
+.categorie-btn.active .cat-arrow.ouvert {
+    background: transparent !important; border: 0 !important; box-shadow: none !important; border-radius: 0 !important;
+    color: #94a3b8 !important; width: 12px !important; height: 12px !important; font-size: 10px !important; line-height: 1; padding: 0 !important; margin: 0 0 0 1px !important; transform: none;
+}
+.categorie-btn .cat-arrow:hover { color: #64748b !important; }
+.categorie-btn .cat-arrow.ouvert { transform: rotate(180deg); }
