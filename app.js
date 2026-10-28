@@ -125,9 +125,9 @@ let nbVisites = 0;
 
 /* ---------- Langues ---------- */
 const traductions = {
-    fr: { flash_title: "⚡ NadorService Flash :", deposer_titre: "📝 Déposer une annonce", lbl_titre: "Titre de l'annonce *", lbl_ville: "Ville *", lbl_cat: "Catégorie *", lbl_tel: "Téléphone *", lbl_loc: "Localisation (Google Maps, Waze…) — facultatif", lbl_prix: "Prix (Optionnel)", lbl_desc: "Description détaillée *", btn_suivant: "Suivant →", lbl_medias: "Glissez ou sélectionnez vos fichiers (Photos, Vidéos)", btn_retour: "⬅️ Retour", btn_publier: "Publier l'annonce", annonces_titre: "📢 Annonces récentes", visiteurs: "Visiteurs", vues: "vues" },
-    en: { flash_title: "⚡ NadorService Flash :", deposer_titre: "📝 Post an Ad", lbl_titre: "Ad Title *", lbl_ville: "City *", lbl_cat: "Category *", lbl_tel: "Phone *", lbl_loc: "Location (Google Maps, Waze…) — optional", lbl_prix: "Price (Optional)", lbl_desc: "Detailed Description *", btn_suivant: "Next →", lbl_medias: "Drag & drop your files (Photos, Videos)", btn_retour: "⬅️ Back", btn_publier: "Publish Ad", annonces_titre: "📢 Recent Ads", visiteurs: "Visitors", vues: "views" },
-    ar: { flash_title: "⚡ NadorService Flash :", deposer_titre: "📝 أضف إعلانًا", lbl_titre: "عنوان الإعلان *", lbl_ville: "المدينة *", lbl_cat: "الفئة *", lbl_tel: "الهاتف *", lbl_loc: "الموقع (Google Maps، Waze…) — اختياري", lbl_prix: "السعر (اختياري)", lbl_desc: "وصف مفصل *", btn_suivant: "التالي →", lbl_medias: "اسحب ملفاتك أو اخترها (صور، فيديوهات)", btn_retour: "⬅️ رجوع", btn_publier: "نشر الإعلان", annonces_titre: "📢 أحدث الإعلانات", visiteurs: "الزوار", vues: "مشاهدة" }
+    fr: { flash_title: "⚡ NadorService Flash :", deposer_titre: "📝 Déposer une annonce", lbl_titre: "Titre de l'annonce *", lbl_ville: "Ville *", lbl_cat: "Catégorie *", lbl_tel: "Téléphone *", lbl_loc: "Localisation (Google Maps, Waze…) — facultatif", lbl_prix: "Prix (Optionnel)", lbl_desc: "Description détaillée *", btn_suivant: "Suivant →", lbl_medias: "Glissez ou sélectionnez vos fichiers (Photos, Vidéos)", btn_retour: "⬅️ Retour", btn_publier: "Publier l'annonce", annonces_titre: "Annonces récentes", visiteurs: "Visiteurs", vues: "vues" },
+    en: { flash_title: "⚡ NadorService Flash :", deposer_titre: "📝 Post an Ad", lbl_titre: "Ad Title *", lbl_ville: "City *", lbl_cat: "Category *", lbl_tel: "Phone *", lbl_loc: "Location (Google Maps, Waze…) — optional", lbl_prix: "Price (Optional)", lbl_desc: "Detailed Description *", btn_suivant: "Next →", lbl_medias: "Drag & drop your files (Photos, Videos)", btn_retour: "⬅️ Back", btn_publier: "Publish Ad", annonces_titre: "Recent Ads", visiteurs: "Visitors", vues: "views" },
+    ar: { flash_title: "⚡ NadorService Flash :", deposer_titre: "📝 أضف إعلانًا", lbl_titre: "عنوان الإعلان *", lbl_ville: "المدينة *", lbl_cat: "الفئة *", lbl_tel: "الهاتف *", lbl_loc: "الموقع (Google Maps، Waze…) — اختياري", lbl_prix: "السعر (اختياري)", lbl_desc: "وصف مفصل *", btn_suivant: "التالي →", lbl_medias: "اسحب ملفاتك أو اخترها (صور، فيديوهات)", btn_retour: "⬅️ رجوع", btn_publier: "نشر الإعلان", annonces_titre: "أحدث الإعلانات", visiteurs: "الزوار", vues: "مشاهدة" }
 };
 
 /* Textes supplémentaires de l'interface (cartes, détails, boutons du haut, messages) */
@@ -1993,22 +1993,18 @@ $q("form-deposer").addEventListener("reset", () => setTimeout(() => { rendreCham
 /* Filtres dynamiques de la page d'accueil */
 let FILT = {};
 function rendreFiltres() {
-    const z = $q("filtres-dyn"); if (!z) return;
-    if (categorieActive === "toutes" || categorieActive === "infos pratiques") { z.innerHTML = ""; return; }
-    const ouvert = z.querySelector("details") && z.querySelector("details").open;
-    const ch = champsPour(sousCategorieActive, categorieActive);
-    z.innerHTML = `<details class="fd"${ouvert ? " open" : ""}><summary>🔎 ${T("Filtres", "Filters", "تصفية متقدمة")}</summary><div class="fd-grille">
-      <div class="form-group"><label>${T("Prix (DH)", "Price (MAD)", "السعر (درهم)")}</label><span class="plage"><input type="number" min="0" placeholder="min" data-f="prix" data-b="min"><input type="number" min="0" placeholder="max" data-f="prix" data-b="max"></span></div>
-      ${ch.map(f => champHTML(f, "flt-", T("Tous", "All", "الكل"))).join("")}</div>
-      <button type="button" class="btn btn-secondary fd-reset">${T("Effacer les filtres", "Clear filters", "مسح التصفية")}</button></details>`;
+    /* Filtres adaptés : affichés dans le panneau « Rechercher », une fois la catégorie (et la sous-catégorie) choisie */
+    const z = $q("rv-champs"); if (!z) return;
+    const cat = $q("rv-cat").value, sous = $q("rv-sous").value;
+    if (!cat) { z.innerHTML = ""; return; }
+    const ch = champsPour(sous, cat);
+    z.innerHTML = `<div class="form-group"><label>${T("Prix (DH)", "Price (MAD)", "السعر (درهم)")}</label><span class="plage"><input type="number" min="0" placeholder="min" data-f="prix" data-b="min"><input type="number" min="0" placeholder="max" data-f="prix" data-b="max"></span></div>`
+        + ch.map(f => champHTML(f, "flt-", T("Tous", "All", "الكل"))).join("");
+    z.querySelectorAll("[data-f]").forEach(el => { const c = FILT[el.dataset.f]; if (c && c[el.dataset.b] !== undefined) el.value = c[el.dataset.b]; });
 }
-$q("filtres-dyn").addEventListener("input", e => {
-    const el = e.target.closest("[data-f]"); if (!el) return;
-    (FILT[el.dataset.f] = FILT[el.dataset.f] || {})[el.dataset.b] = el.value; afficherAnnonces();
-});
-$q("filtres-dyn").addEventListener("click", e => { if (e.target.closest(".fd-reset")) { FILT = {}; rendreFiltres(); afficherAnnonces(); } });
 const plein = v => v !== undefined && v !== "";
 function passeFiltres(a) {
+    if ($q("recherche-bar").hidden) return true;   /* filtres actifs seulement quand « Rechercher » est ouvert */
     for (const [k, c] of Object.entries(FILT)) {
         const v = k === "prix" ? a.prix : (a.attributs || {})[k];
         if (plein(c.min) && !(v != null && Number(v) >= Number(c.min))) return false;
@@ -2021,24 +2017,49 @@ function passeFiltres(a) {
 const _fpc = filtrerParCategorie;
 filtrerParCategorie = l => _fpc(l).filter(passeFiltres);
 const _cc = choisirCategorie;
-choisirCategorie = function (c, s) { FILT = {}; _cc(c, s); rendreFiltres(); };
+choisirCategorie = function (c, s) { _cc(c, s); };
 
 /* ===== 8. Recherche : mots clés + ville, région, secteur, quartier ===== */
 const adv = document.createElement("div");
 adv.className = "recherche-avancee";
-adv.innerHTML = `<select id="rv-ville"></select><input id="rv-quartier" type="text" maxlength="60">`;
+adv.innerHTML = `<select id="rv-cat"></select><select id="rv-sous"></select><div id="rv-champs" class="fd-grille rv-champs"></div><select id="rv-ville"></select><input id="rv-quartier" type="text" maxlength="60"><button type="button" id="rv-reset" class="btn btn-secondary"></button>`;
 $q("recherche-bar").appendChild(adv);
-adv.addEventListener("input", () => afficherAnnonces());
+
+/* Recherche : catégorie > sous-catégorie > filtres adaptés ; ville et quartier toujours disponibles (tout est facultatif) */
+function majSousRecherche() {
+    const cat = $q("rv-cat").value, sv = $q("rv-sous").value, s = $q("rv-sous"), subs = cat && cat !== "autres" ? (SOUS_CATS[cat] || []) : [];
+    s.innerHTML = `<option value="">${T("Toutes les sous-catégories", "All subcategories", "كل الفئات الفرعية")}</option>` + subs.map(x => `<option value="${esc(x[0])}">${esc(x[idxLangue()])}</option>`).join("");
+    s.value = subs.some(x => x[0] === sv) ? sv : "";
+    s.hidden = !subs.length;
+}
+adv.addEventListener("input", e => {
+    const el = e.target;
+    if (el.id === "rv-cat") { FILT = {}; $q("rv-sous").value = ""; majSousRecherche(); rendreFiltres(); }
+    else if (el.id === "rv-sous") { FILT = {}; rendreFiltres(); }
+    else if (el.closest && el.closest("[data-f]")) { const f = el.closest("[data-f]"); (FILT[f.dataset.f] = FILT[f.dataset.f] || {})[f.dataset.b] = f.value; }
+    afficherAnnonces();
+});
+$q("rv-reset").addEventListener("click", () => {
+    FILT = {}; $q("rv-cat").value = ""; $q("rv-ville").value = ""; $q("rv-quartier").value = "";
+    majSousRecherche(); rendreFiltres(); afficherAnnonces();
+});
 function majRechercheAvancee() {
-    const sv = $q("rv-ville").value;
+    const sc = $q("rv-cat").value, sv = $q("rv-ville").value;
+    $q("rv-cat").innerHTML = `<option value="">${T("Toutes les catégories", "All categories", "كل الفئات")}</option>` + CAT_ORDRE.map(([n, k]) => `<option value="${k}">${esc(CATS_AFFICHAGE[langueActuelle][k])}</option>`).join("");
+    $q("rv-cat").value = sc;
+    majSousRecherche();
     remplirVilles($q("rv-ville")); $q("rv-ville").options[0].textContent = T("Toutes les villes", "All cities", "كل المدن"); $q("rv-ville").value = sv;
-    $q("rv-quartier").placeholder = T("Quartier", "Neighbourhood", "الحي");
+    $q("rv-quartier").placeholder = T("Quartier (facultatif)", "Neighbourhood (optional)", "الحي (اختياري)");
+    $q("rv-reset").textContent = T("Effacer les filtres", "Clear filters", "مسح التصفية");
 }
 rechercher = function (liste) {
     const on = !$q("recherche-bar").hidden, g = id => on ? nz($q(id).value) : "";
     const ville = g("rv-ville"), quartier = g("rv-quartier");
+    const cat = on ? $q("rv-cat").value : "", sous = on ? $q("rv-sous").value : "";
     const mots = nz(termeRecherche).split(/\s+/).filter(Boolean);
     return liste.filter(a => {
+        if (cat && cleCategorie(a.categorie) !== cat) return false;
+        if (sous && norm(a.sousCategorie) !== norm(sous)) return false;
         if (ville && nz(a.ville) !== ville) return false;
         if (quartier && !nz(a.quartier).includes(quartier)) return false;
         if (!mots.length) return true;

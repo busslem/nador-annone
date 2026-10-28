@@ -1615,3 +1615,44 @@ html.souscat-ouvert, html.souscat-ouvert body { overflow: hidden; }
 /* Visiteurs : en gris, différent des autres icônes */
 .nouvelle-bande .actions-bar > .visiteurs { color: #c4cdd9; }
 .nouvelle-bande .actions-bar > .visiteurs .ico { filter: grayscale(1) brightness(1.2); }
+
+/* Panneau « Rechercher » : catégorie > sous-catégorie > filtres adaptés > ville / quartier */
+.recherche-avancee { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); align-items: start; padding-bottom: 10px; }
+.recherche-avancee .rv-champs { grid-column: 1 / -1; margin: 2px 0; }
+.recherche-avancee .rv-champs:empty { display: none; }
+.recherche-avancee .rv-champs .form-group { margin: 0; text-align: start; }
+.recherche-avancee .rv-champs label { display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 3px; }
+.recherche-avancee select[hidden] { display: none; }
+.recherche-avancee #rv-reset { padding: 9px 12px; font-size: 14px; }
+
+/* Catégories collées à la bande Flash ; flèche en bas à droite */
+.categories-bar { padding-top: 0 !important; padding-bottom: 12px; }
+.categories-container { padding-top: 0 !important; padding-bottom: 10px; }
+.categorie-btn { border-radius: 0 0 14px 14px; }
+.categorie-btn .cat-arrow,
+.categorie-btn:hover .cat-arrow,
+.categorie-btn.active .cat-arrow,
+.categorie-btn.active:hover .cat-arrow { top: auto; bottom: -7px; inset-inline-end: -3px; }
+@media (max-width: 600px) {
+    .categories-bar { padding-top: 0 !important; padding-bottom: 10px; }
+    .categories-container { padding-top: 0 !important; padding-bottom: 9px; }
+    .categorie-btn { border-radius: 0 0 12px 12px; }
+    .categorie-btn .cat-arrow,
+    .categorie-btn:hover .cat-arrow,
+    .categorie-btn.active .cat-arrow,
+    .categorie-btn.active:hover .cat-arrow { top: auto; bottom: -7px; inset-inline-end: -3px; }
+}
+
+/* Panneau Rechercher compact sur téléphone */
+.recherche-bar:not([hidden]) { max-height: 72vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+@media (max-width: 600px) {
+    .recherche-avancee { grid-template-columns: 1fr 1fr; gap: 6px; padding: 0 10px 10px; }
+    .recherche-avancee #rv-cat, .recherche-avancee #rv-sous { grid-column: span 1; }
+    .recherche-avancee .rv-champs { grid-template-columns: 1fr 1fr; gap: 6px 8px; }
+    .recherche-avancee .rv-champs .form-group:first-child { grid-column: 1 / -1; }
+    .recherche-avancee select, .recherche-avancee input { padding: 8px 6px; font-size: 13px; min-width: 0; }
+    .recherche-avancee #rv-reset { grid-column: 1 / -1; }
+}
+
+/* Bande Flash : textes défilants en gras */
+.marquee-item, .marquee-item *, .flash-texte, .flash-defile, .flash-defile * { font-weight: 700; }
