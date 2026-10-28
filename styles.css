@@ -1283,3 +1283,121 @@ html.souscat-ouvert, html.souscat-ouvert body { overflow: hidden; }
 .categories-container { padding-top: 0; }
 .flash-section { height: 70px; }
 .flash-thumb { height: 50px; max-width: 70px; }
+
+/* =====================================================================
+   19. TÉLÉPHONE (≤ 600 px) : en-tête complet, icônes sur une seule ligne, annonces compactes
+   L'ordinateur et la tablette gardent l'affichage précédent.
+   ===================================================================== */
+@media (max-width: 600px) {
+
+    /* ---- En-tête : logo + titre + phrase visible (très claire) ---- */
+    .main-header { min-height: 0; padding: calc(env(safe-area-inset-top, 0px) + 12px) 0 12px; }
+    .header-container { padding: 0 12px; gap: 4px; }
+    .title-row { gap: 8px; flex-wrap: nowrap; }
+    .brand-logo { height: 44px; }
+    .brand-title { font-size: clamp(26px, 8.4vw, 34px); }
+    .brand-tagline {
+        display: block !important;
+        max-width: none;
+        margin: 6px 0 0;
+        font-size: clamp(11px, 3.3vw, 14px);
+        font-weight: 600;
+        line-height: 1.25;
+        color: #f4fbff;
+        text-shadow: 0 1px 2px rgba(4,32,56,.95), 0 0 6px rgba(4,32,56,.8), 0 0 14px rgba(4,32,56,.6);
+    }
+
+    /* ---- Bande au-dessus du Flash : tout sur une ligne, boutons en icônes ---- */
+    .nouvelle-bande { padding: 6px 6px 0; gap: 5px; }
+    .bande-gauche { gap: 5px; }
+    .btn-menu { width: clamp(32px, 9vw, 40px); height: clamp(32px, 9vw, 40px); }
+    .lang-bar .lang-globe { width: clamp(28px, 8vw, 34px); height: clamp(28px, 8vw, 34px); font-size: 16px; }
+    .lang-bar .lang-abbr button { padding: 0 5px; font-size: 10px; line-height: 1.25; }
+    .nouvelle-bande .actions-bar { gap: 4px; justify-content: space-evenly; }
+    .nouvelle-bande .actions-bar::before { display: none; }
+    .nouvelle-bande .actions-bar > button,
+    .nouvelle-bande .actions-bar > .visiteurs {
+        min-height: clamp(32px, 9vw, 40px);
+        min-width: clamp(32px, 9vw, 40px);
+        padding: 0 4px;
+        font-size: 0;                 /* le texte est masqué : seule l'icône reste */
+        border-radius: 8px;
+        justify-content: center;
+    }
+    .nouvelle-bande .actions-bar > button::before { font-size: 18px; line-height: 1; }
+    #btn-login-user::before    { content: "👤"; }
+    #btn-ouvrir-depot::before  { content: "➕"; }
+    #btn-rechercher::before    { content: "🔍"; }
+    #btn-demander::before      { content: "🙋"; }
+    #btn-admin-panel::before   { content: "🔑"; }
+    #btn-logout::before        { content: "🚪"; }
+    /* Visiteurs : 👥 + nombre seulement */
+    .nouvelle-bande .actions-bar > .visiteurs { font-size: 14px; padding: 0 6px; gap: 3px; }
+    .visiteurs #txt-visites { font-size: 0; }
+    .visiteurs #txt-visites::after { content: attr(data-n); font-size: 12px; font-weight: 700; }
+    #label-user-connecte { display: none !important; }
+
+    /* ---- Bande Flash ---- */
+    .flash-label { padding: 0 8px; font-size: 13px; }
+
+    /* ---- Bande sous le Flash : les catégories sur une seule ligne ---- */
+    .categories-bar { padding: 4px 0 6px; }
+    .categories-container {
+        font-size: clamp(8.5px, 2.65vw, 11px);
+        gap: 0.35em;
+        padding: 2px 6px;
+        justify-content: stretch;
+    }
+    .categories-container > :first-child { margin-inline-start: 0; }
+    .categories-container > :last-child { margin-inline-end: 0; }
+    .categorie-btn {
+        position: relative;
+        flex: 1 0 auto;
+        width: min-content;           /* largeur du mot le plus long : l'emoji passe au-dessus du nom */
+        flex-direction: column;
+        justify-content: center;
+        padding: 0.4em 0.3em;
+        border-width: 1.5px;
+        border-radius: 12px;
+        white-space: normal;
+        text-align: center;
+        line-height: 1.2;
+        font-size: 1em;
+        box-shadow: 0 1px 3px rgba(20, 70, 140, 0.18);
+    }
+    .categorie-btn .cat-arrow {       /* petite flèche dans le coin, ne prend plus de place */
+        position: absolute; top: -5px; inset-inline-end: -3px;
+        width: 15px; height: 15px; margin: 0; font-size: 8px;
+    }
+    .btn-actualiser { width: 2.4em; height: 2.4em; font-size: 1em; align-self: center; }
+
+    /* ---- Annonces : cartes compactes (photo à gauche, texte à droite) ---- */
+    .container { padding-left: 8px; padding-right: 8px; }
+    .card-section { padding: 10px 8px; }
+    .card-section h2 { font-size: 18px; margin: 0 0 8px; }
+    .annonces-grid { grid-template-columns: 1fr; gap: 8px; }
+    .carte-annonce { flex-direction: row; align-items: stretch; border-radius: 10px; min-height: 104px; }
+    .carte-annonce .carrousel-container {
+        flex: 0 0 34%; width: 34%; max-width: 150px; height: auto; min-height: 104px;
+    }
+    .carte-annonce .carrousel-media { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .carte-annonce .nav-arrow { width: 22px; height: 22px; padding: 0; font-size: 12px; line-height: 1; }
+    .carte-annonce .nav-arrow.left { left: 3px; }
+    .carte-annonce .nav-arrow.right { right: 3px; }
+    .carte-annonce .badge-premium { top: 4px; left: 4px; padding: 1px 5px; font-size: 9.5px; }
+    .carte-annonce .annonce-body { padding: 7px 9px; min-width: 0; }
+    .carte-annonce .annonce-cat { font-size: 11px; }
+    .carte-annonce h3 {
+        margin: 2px 0; font-size: 14.5px; line-height: 1.25;
+        display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .carte-annonce .annonce-prix { margin: 1px 0; font-size: 14.5px; }
+    .carte-annonce .annonce-meta { margin-bottom: 3px; font-size: 11.5px; gap: 8px; }
+    .carte-annonce .annonce-body > p {
+        margin: 0 0 4px !important; font-size: 12.5px !important; line-height: 1.3;
+        display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .carte-annonce .annonce-actions { gap: 4px; }
+    .carte-annonce .annonce-actions .btn { padding: 3px 8px; font-size: 12px; }
+    .carte-annonce .lien-voir-plus { padding: 0; font-size: 13px; }
+}

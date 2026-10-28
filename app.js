@@ -258,7 +258,8 @@ function changerLangue(lang) {
 }
 
 function afficherStats() { 
-    $("txt-visites").textContent = `${t("visiteurs")} : ${nbVisites}`; 
+    $("txt-visites").textContent = `${t("visiteurs")} : ${nbVisites}`;
+    $("txt-visites").dataset.n = nbVisites;
 }
 
 /* ---------- Traduction automatique du contenu des annonces ----------
@@ -2393,3 +2394,15 @@ function ouvrirTexte(cle) {
         if (!dedans) d.close();
     });
 });
+
+/* Téléphone : les boutons de la bande du haut n'affichent que leur icône ; le texte reste en infobulle / lecteur d'écran */
+(function () {
+    const bar = document.querySelector(".nouvelle-bande .actions-bar");
+    if (!bar) return;
+    const titrer = () => bar.querySelectorAll(":scope > button").forEach(b => {
+        const txt = b.textContent.replace(/^[^\p{L}\p{N}]+/u, "").trim();
+        if (txt && b.getAttribute("aria-label") !== txt) { b.setAttribute("aria-label", txt); b.title = txt; }
+    });
+    titrer();
+    new MutationObserver(titrer).observe(bar, { childList: true, characterData: true, subtree: true });
+})();
