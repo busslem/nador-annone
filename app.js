@@ -2403,16 +2403,30 @@ function ouvrirTexte(cle) {
     });
 });
 
-/* Téléphone : les boutons de la bande du haut n'affichent que leur icône ; le texte reste en infobulle / lecteur d'écran */
+/* Bande du haut : les symboles/emojis des boutons sont isolés dans <span class="ico"> (masqués sur téléphone, visibles sur grand écran) */
 (function () {
     const bar = document.querySelector(".nouvelle-bande .actions-bar");
     if (!bar) return;
-    const titrer = () => bar.querySelectorAll(":scope > button").forEach(b => {
-        const txt = b.textContent.replace(/^[^\p{L}\p{N}]+/u, "").trim();
-        if (txt && b.getAttribute("aria-label") !== txt) { b.setAttribute("aria-label", txt); b.title = txt; }
+    const sym = /^[^\p{L}\p{N}]+/u;
+    const maj = () => bar.querySelectorAll(":scope > button, :scope > .visiteurs").forEach(b => {
+        const n = b.firstChild;
+        if (n && n.nodeType === 3) {
+            const m = n.nodeValue.match(sym);
+            if (m) {
+                const s = document.createElement("span");
+                s.className = "ico"; s.textContent = m[0];
+                n.nodeValue = n.nodeValue.slice(m[0].length);
+                b.insertBefore(s, n);
+                if (!n.nodeValue) n.remove();
+            }
+        }
+        if (b.tagName === "BUTTON") {
+            const txt = b.textContent.replace(sym, "").trim();
+            if (txt && b.getAttribute("aria-label") !== txt) { b.setAttribute("aria-label", txt); b.title = txt; }
+        }
     });
-    titrer();
-    new MutationObserver(titrer).observe(bar, { childList: true, characterData: true, subtree: true });
+    maj();
+    new MutationObserver(maj).observe(bar, { childList: true, characterData: true, subtree: true });
 })();
 
 /* Téléphone : le menu ☰ se place juste sous « Toutes » ; sur grand écran il reste dans la bande du haut */
