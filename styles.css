@@ -1689,3 +1689,22 @@ html.souscat-ouvert, html.souscat-ouvert body { overflow: hidden; }
 }
 .categorie-btn .cat-arrow:hover { color: #64748b !important; }
 .categorie-btn .cat-arrow.ouvert { transform: rotate(180deg); }
+
+/* Flèche des sous-catégories : plus grande (toujours grise claire, sans cercle) */
+.categorie-btn .cat-arrow,
+.categorie-btn:hover .cat-arrow,
+.categorie-btn.active .cat-arrow,
+.categorie-btn.active:hover .cat-arrow,
+.categorie-btn .cat-arrow:hover,
+.categorie-btn .cat-arrow.ouvert,
+.categorie-btn.active .cat-arrow.ouvert {
+    width: 22px !important; height: 22px !important; font-size: 18px !important; margin: 0 -2px 0 2px !important;
+}
+@media (max-width: 600px) {
+    .categorie-btn .cat-arrow,
+    .categorie-btn:hover .cat-arrow,
+    .categorie-btn.active .cat-arrow,
+    .categorie-btn.active:hover .cat-arrow {
+        width: 20px !important; height: 20px !important; font-size: 16px !important;
+    }
+}
