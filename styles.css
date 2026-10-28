@@ -1656,3 +1656,22 @@ html.souscat-ouvert, html.souscat-ouvert body { overflow: hidden; }
 
 /* Bande Flash : textes défilants en gras */
 .marquee-item, .marquee-item *, .flash-texte, .flash-defile, .flash-defile * { font-weight: 700; }
+
+/* Flèches soudées DANS le bouton, à droite du mot */
+.categorie-btn.a-sous { flex-direction: row; gap: 6px; padding-inline-end: 0.5em; }
+.categorie-btn .cat-arrow,
+.categorie-btn:hover .cat-arrow,
+.categorie-btn.active .cat-arrow,
+.categorie-btn.active:hover .cat-arrow {
+    position: static !important; flex: none; margin: 0 0 0 2px; width: 18px; height: 18px; font-size: 9px;
+    border: 0; box-shadow: none; background: #64748b; color: #fff; border-radius: 50%;
+}
+.categorie-btn.active .cat-arrow, .categorie-btn.active:hover .cat-arrow { background: #1e3a8a; color: #fff; }
+.categorie-btn .cat-arrow:hover, .categorie-btn .cat-arrow.ouvert { background: #1e293b; color: #fff; }
+@media (max-width: 600px) {
+    .categorie-btn.a-sous { gap: 4px; padding-inline: 0.5em 0.4em; }
+    .categorie-btn .cat-arrow,
+    .categorie-btn:hover .cat-arrow,
+    .categorie-btn.active .cat-arrow,
+    .categorie-btn.active:hover .cat-arrow { position: static !important; width: 16px; height: 16px; font-size: 8px; margin: 0; }
+}
