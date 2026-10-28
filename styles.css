@@ -1464,3 +1464,154 @@ html.souscat-ouvert, html.souscat-ouvert body { overflow: hidden; }
     .categories-bar { position: relative; }
     .categories-bar .menu-site { top: calc(100% + 4px); inset-inline-start: 8px; width: min(270px, calc(100vw - 16px)); }
 }
+
+/* =====================================================================
+   21. STYLE « MAQUETTE » : bande bleue, ligne visiteurs, bande Flash jaune, catégories avec icônes
+   ===================================================================== */
+.nouvelle-bande {
+    display: flex; flex-wrap: nowrap; align-items: center; justify-content: space-between; gap: 6px; margin: 0;
+    padding: 8px 12px 0; min-height: 0;
+    background: #134a8f; border: 0; box-shadow: none;
+}
+.bande-gauche { align-self: center; align-items: center; gap: 4px; }
+.btn-menu, .categories-container > .menu-site-wrap .btn-menu { width: 40px; height: 40px; border-radius: 8px; background: transparent; color: #fff; }
+.btn-menu:hover, .btn-menu[aria-expanded="true"] { background: rgba(255, 255, 255, 0.18); }
+.lang-bar .lang-globe { background: #eaf3ff; }
+.lang-bar .lang-globe:hover { background: #fff; }
+.lang-bar .lang-abbr button { background: #eaf3ff; color: #1e3a5f; }
+.lang-bar .lang-abbr button:hover { background: #fff; color: #1e3a5f; }
+.lang-bar .lang-abbr button.actif { background: #2563eb; color: #fff; }
+
+.nouvelle-bande .actions-bar { align-self: center; align-items: center; justify-content: flex-end; gap: 6px; padding: 0; }
+.nouvelle-bande .actions-bar .ico { display: none !important; }
+#label-user-connecte { color: #fff; }
+
+/* Loupe à la place du mot « Rechercher » */
+.nouvelle-bande .actions-bar > #btn-rechercher {
+    display: inline-flex !important; align-items: center; justify-content: center;
+    width: 40px; min-width: 40px; height: 40px; min-height: 40px !important; padding: 0 !important;
+    border: 0; border-radius: 8px; background: transparent; color: #fff;
+}
+.nouvelle-bande .actions-bar > #btn-rechercher:hover, .nouvelle-bande .actions-bar > #btn-rechercher.ouvert { background: rgba(255, 255, 255, 0.18); }
+
+/* « Demander un service » : orange, sur deux lignes */
+.nouvelle-bande .actions-bar > #btn-demander {
+    display: inline-flex !important; align-items: center; justify-content: center; text-align: center;
+    white-space: normal !important; width: 100px; max-width: 100px; min-height: 44px !important; padding: 5px 6px !important;
+    border: 0; border-radius: 8px; background: transparent; color: #fff;
+    font-size: 15px; font-weight: 600; line-height: 1.1;
+}
+.nouvelle-bande .actions-bar > #btn-demander:hover { background: rgba(255, 255, 255, 0.14); }
+
+/* « Publier » : bouton contour clair */
+.nouvelle-bande .actions-bar > #btn-ouvrir-depot {
+    display: inline-flex !important; align-items: center; justify-content: center;
+    min-height: 44px !important; padding: 6px 8px !important;
+    border: 0; border-radius: 8px;
+    background: transparent; color: #fff;
+    font-size: 16px; font-weight: 600; box-shadow: none;
+}
+.nouvelle-bande .actions-bar > #btn-ouvrir-depot:hover { background: rgba(255, 255, 255, 0.14); }
+
+/* « Se Connecter » : icône utilisateur + texte, sans fond */
+.nouvelle-bande .actions-bar > #btn-login-user {
+    display: inline-flex !important; align-items: center; justify-content: center; gap: 6px;
+    min-height: 44px !important; padding: 6px 6px !important;
+    border: 0; background: transparent; color: #fff; font-size: 16px; font-weight: 600;
+}
+.nouvelle-bande .actions-bar > #btn-login-user::before {
+    content: ""; flex: 0 0 auto; width: 22px; height: 22px;
+    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round'><circle cx='12' cy='8' r='4'/><path d='M4 21c0-4 3.6-7 8-7s8 3 8 7'/></svg>") center / contain no-repeat;
+}
+.nouvelle-bande .actions-bar > #btn-login-user:hover { background: rgba(255, 255, 255, 0.14); }
+.nouvelle-bande .actions-bar > #btn-admin-panel, .nouvelle-bande .actions-bar > #btn-logout { min-height: 36px !important; padding: 4px 10px !important; font-size: 13px; }
+
+/* Visiteurs : à droite de « Se Connecter », même ligne */
+.nouvelle-bande .actions-bar > .visiteurs { display: inline-flex !important; align-items: center; gap: 3px; min-height: 44px; padding: 0 4px !important; background: transparent; color: #fff; font-size: 14px; font-weight: 600; white-space: nowrap !important; }
+.nouvelle-bande .actions-bar > .visiteurs .ico { display: inline !important; }
+
+/* Bande Flash : fond jaune clair, texte sombre */
+.flash-section { height: 68px; margin: 0; background: #fdf3b4; color: #1f2937; border-bottom: 1px solid #f3e08a; }
+.flash-label { background: transparent; color: #1f2937; padding: 0 4px 0 12px; font-size: 15px; font-weight: 600; }
+.marquee-item { color: #1f2937; }
+.marquee-item:hover { color: #92400e; }
+.flash-texte { text-decoration: none; }
+.flash-thumb { height: 50px; max-width: 70px; }
+
+/* Catégories : boutons blancs arrondis, icône sous le mot */
+.categories-bar { padding: 10px 0 8px; background: linear-gradient(180deg, #e6effb 0%, #f4f8fd 100%); border-bottom: 0; box-shadow: none; }
+.categories-container { align-items: stretch; gap: 8px; padding: 4px 10px; }
+.categorie-btn {
+    flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+    min-height: 2.6em; padding: 0.5em 0.9em; border: 0; border-radius: 14px;
+    background: #fff; color: #1f2937; font-weight: 500; line-height: 1.15;
+    box-shadow: 0 2px 6px rgba(30, 70, 140, 0.22);
+}
+.categorie-btn:hover { background: #eef5ff; color: #1f2937; transform: none; box-shadow: 0 3px 8px rgba(30, 70, 140, 0.28); }
+.categorie-btn.active, .categorie-btn.active:hover { background: #dbe9fb; color: #1e3a8a; box-shadow: 0 2px 8px rgba(30, 70, 140, 0.3); }
+.categorie-btn.a-sous { padding-bottom: 0.45em; }
+.categorie-btn .cat-arrow,
+.categorie-btn:hover .cat-arrow,
+.categorie-btn.active .cat-arrow,
+.categorie-btn.active:hover .cat-arrow { top: -5px; bottom: auto; inset-inline-end: -3px; }
+
+/* Téléphone : tout sur une seule ligne */
+@media (max-width: 600px) {
+    .nouvelle-bande { padding: 6px 4px 0; gap: 2px; align-items: center; }
+    .bande-gauche { gap: 0; }
+    .btn-menu { width: 32px; height: 36px; }
+    .lang-bar .lang-globe { width: 22px; height: 22px; font-size: 13px; }
+    .nouvelle-bande .actions-bar { flex: 1 1 auto; min-width: 0; gap: 2px; align-self: center; align-items: center; justify-content: space-between; overflow-x: auto; }
+    .nouvelle-bande .actions-bar > #btn-rechercher { width: 28px; min-width: 28px; height: 36px; min-height: 36px !important; }
+    .nouvelle-bande .actions-bar > #btn-rechercher svg { width: 22px; height: 22px; }
+    .nouvelle-bande .actions-bar > #btn-demander, .nouvelle-bande .actions-bar > #btn-ouvrir-depot, .nouvelle-bande .actions-bar > #btn-login-user {
+        flex: 0 1 auto !important; width: min-content; max-width: none; min-height: 36px !important; padding: 3px 4px !important;
+        font-size: clamp(9.5px, 2.9vw, 11.5px); line-height: 1.1; white-space: normal !important; text-align: center;
+    }
+    .nouvelle-bande .actions-bar > #btn-login-user { gap: 2px; }
+    .nouvelle-bande .actions-bar > #btn-login-user::before { width: 15px; height: 15px; }
+    .nouvelle-bande .actions-bar > .visiteurs { flex: 0 0 auto !important; min-height: 36px; padding: 0 2px !important; font-size: clamp(10px, 3vw, 12px); }
+    .nouvelle-bande .actions-bar > .visiteurs .vis-lib { display: none; }
+    .nouvelle-bande .actions-bar > #btn-admin-panel, .nouvelle-bande .actions-bar > #btn-logout { flex: 0 0 auto !important; width: auto; min-height: 30px !important; padding: 3px 6px !important; font-size: 10px; }
+    .flash-section { height: 60px; }
+    .flash-label { padding: 0 3px 0 8px; font-size: 14px; }
+    .flash-thumb { height: 44px; max-width: 62px; }
+    .categories-bar { padding: 8px 0 6px; }
+    .categories-container { gap: 5px; padding: 6px 6px 4px; }
+    .categorie-btn { padding: 0.45em 0.5em; border-radius: 12px; min-height: 2.6em; }
+    .categorie-btn.a-sous { padding-bottom: 0.45em; }
+    .categorie-btn .cat-arrow,
+    .categorie-btn:hover .cat-arrow,
+    .categorie-btn.active .cat-arrow,
+    .categorie-btn.active:hover .cat-arrow { top: -6px; bottom: auto; inset-inline-end: -3px; }
+}
+
+/* Micro : jamais affiché à côté du titre des annonces */
+.mic-icon-title, .card-section h2 svg, .card-section h2 img { display: none !important; }
+
+/* En-tête : logo à gauche du titre, bien net et lisible (mêmes couleurs) */
+.title-row { flex-wrap: nowrap; }
+.brand-logo { filter: drop-shadow(0 0 3px rgba(255,255,255,.95)) drop-shadow(0 0 8px rgba(255,255,255,.75)) contrast(1.12) saturate(1.1); }
+.brand-title { filter: drop-shadow(0 0 3px rgba(255,255,255,1)) drop-shadow(0 0 8px rgba(255,255,255,.95)) drop-shadow(0 0 16px rgba(255,255,255,.7)); }
+.brand-primary { color: #031c40; }
+@media (max-width: 600px) {
+    .brand-logo { height: 54px; }
+    .brand-title { font-size: clamp(28px, 9vw, 36px); }
+}
+
+/* Langues : seulement l'icône 🌐 + l'abréviation de la langue active au-dessus (partout) */
+.lang-bar { flex-direction: column-reverse; align-items: center; justify-content: center; gap: 2px; }
+.lang-bar .lang-globe { width: 24px; height: 24px; font-size: 14px; }
+.lang-abbr { flex-direction: row; }
+.lang-bar .lang-abbr button { display: none; }
+.lang-bar .lang-abbr button.actif { display: inline-flex; align-items: center; justify-content: center; height: 13px; padding: 0 7px; border-radius: 7px; font-size: 10px; font-weight: 700; line-height: 1; }
+.lang-menu { top: calc(100% + 8px); }
+
+/* Bande Flash : petit logo + « Flash » aux couleurs du logo */
+.flash-label { gap: 6px; }
+.flash-logo { display: block; height: 28px; width: auto; flex: none; filter: drop-shadow(0 0 2px rgba(255,255,255,.9)); }
+.flash-mot { font-weight: 800; font-size: 18px; letter-spacing: .01em; color: #0a5c52; background: linear-gradient(90deg, #052a5c 0%, #0a5c52 55%, #0e6b3f 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+
+/* Visiteurs : en gris, différent des autres icônes */
+.nouvelle-bande .actions-bar > .visiteurs { color: #c4cdd9; }
+.nouvelle-bande .actions-bar > .visiteurs .ico { filter: grayscale(1) brightness(1.2); }

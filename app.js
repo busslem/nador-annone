@@ -111,7 +111,7 @@ const indexCarrousel = {};
 let sousCategorieActive = null;
 
 /* ===== RÉGLAGES FACILES À MODIFIER ===== */
-const VITESSE_FLASH = 40;   // vitesse de la bande Flash en pixels par seconde (plus petit = plus lent)
+const VITESSE_FLASH = 55;   // vitesse de la bande Flash en pixels par seconde (plus petit = plus lent)
 const CONTACT = {           // coordonnées affichées dans « Nous contacter » (laissez "" pour masquer un moyen)
     whatsapp: "0646938002",
     telephone: "+212646938002",
@@ -125,9 +125,9 @@ let nbVisites = 0;
 
 /* ---------- Langues ---------- */
 const traductions = {
-    fr: { flash_title: "⚡ Flash", deposer_titre: "📝 Déposer une annonce", lbl_titre: "Titre de l'annonce *", lbl_ville: "Ville *", lbl_cat: "Catégorie *", lbl_tel: "Téléphone *", lbl_loc: "Localisation (Google Maps, Waze…) — facultatif", lbl_prix: "Prix (Optionnel)", lbl_desc: "Description détaillée *", btn_suivant: "Suivant →", lbl_medias: "Glissez ou sélectionnez vos fichiers (Photos, Vidéos)", btn_retour: "⬅️ Retour", btn_publier: "Publier l'annonce", annonces_titre: "📢 Annonces récentes", visiteurs: "Visiteurs", vues: "vues" },
-    en: { flash_title: "⚡ Featured Listings", deposer_titre: "📝 Post an Ad", lbl_titre: "Ad Title *", lbl_ville: "City *", lbl_cat: "Category *", lbl_tel: "Phone *", lbl_loc: "Location (Google Maps, Waze…) — optional", lbl_prix: "Price (Optional)", lbl_desc: "Detailed Description *", btn_suivant: "Next →", lbl_medias: "Drag & drop your files (Photos, Videos)", btn_retour: "⬅️ Back", btn_publier: "Publish Ad", annonces_titre: "📢 Recent Ads", visiteurs: "Visitors", vues: "views" },
-    ar: { flash_title: "⚡ الإعلانات العاجلة", deposer_titre: "📝 أضف إعلانًا", lbl_titre: "عنوان الإعلان *", lbl_ville: "المدينة *", lbl_cat: "الفئة *", lbl_tel: "الهاتف *", lbl_loc: "الموقع (Google Maps، Waze…) — اختياري", lbl_prix: "السعر (اختياري)", lbl_desc: "وصف مفصل *", btn_suivant: "التالي →", lbl_medias: "اسحب ملفاتك أو اخترها (صور، فيديوهات)", btn_retour: "⬅️ رجوع", btn_publier: "نشر الإعلان", annonces_titre: "📢 أحدث الإعلانات", visiteurs: "الزوار", vues: "مشاهدة" }
+    fr: { flash_title: "⚡ NadorService Flash :", deposer_titre: "📝 Déposer une annonce", lbl_titre: "Titre de l'annonce *", lbl_ville: "Ville *", lbl_cat: "Catégorie *", lbl_tel: "Téléphone *", lbl_loc: "Localisation (Google Maps, Waze…) — facultatif", lbl_prix: "Prix (Optionnel)", lbl_desc: "Description détaillée *", btn_suivant: "Suivant →", lbl_medias: "Glissez ou sélectionnez vos fichiers (Photos, Vidéos)", btn_retour: "⬅️ Retour", btn_publier: "Publier l'annonce", annonces_titre: "📢 Annonces récentes", visiteurs: "Visiteurs", vues: "vues" },
+    en: { flash_title: "⚡ NadorService Flash :", deposer_titre: "📝 Post an Ad", lbl_titre: "Ad Title *", lbl_ville: "City *", lbl_cat: "Category *", lbl_tel: "Phone *", lbl_loc: "Location (Google Maps, Waze…) — optional", lbl_prix: "Price (Optional)", lbl_desc: "Detailed Description *", btn_suivant: "Next →", lbl_medias: "Drag & drop your files (Photos, Videos)", btn_retour: "⬅️ Back", btn_publier: "Publish Ad", annonces_titre: "📢 Recent Ads", visiteurs: "Visitors", vues: "views" },
+    ar: { flash_title: "⚡ NadorService Flash :", deposer_titre: "📝 أضف إعلانًا", lbl_titre: "عنوان الإعلان *", lbl_ville: "المدينة *", lbl_cat: "الفئة *", lbl_tel: "الهاتف *", lbl_loc: "الموقع (Google Maps، Waze…) — اختياري", lbl_prix: "السعر (اختياري)", lbl_desc: "وصف مفصل *", btn_suivant: "التالي →", lbl_medias: "اسحب ملفاتك أو اخترها (صور، فيديوهات)", btn_retour: "⬅️ رجوع", btn_publier: "نشر الإعلان", annonces_titre: "📢 أحدث الإعلانات", visiteurs: "الزوار", vues: "مشاهدة" }
 };
 
 /* Textes supplémentaires de l'interface (cartes, détails, boutons du haut, messages) */
@@ -258,7 +258,9 @@ function changerLangue(lang) {
 }
 
 function afficherStats() { 
-    $("txt-visites").textContent = `${t("visiteurs")} : ${nbVisites}`;
+    const tv = $("txt-visites"); tv.textContent = "";
+    const lib = document.createElement("span"); lib.className = "vis-lib"; lib.textContent = `${t("visiteurs")} : `;
+    tv.append(lib, String(nbVisites));
     $("txt-visites").dataset.n = nbVisites;
 }
 
@@ -2436,7 +2438,7 @@ function ouvrirTexte(cle) {
     if (!wrap || !gauche || !cats) return;
     const mq = window.matchMedia("(max-width: 600px)");
     const placer = () => {
-        if (mq.matches) {
+        if (false) {
             const services = cats.querySelector('.categorie-btn[data-categorie="Services"]');
             cats.insertBefore(wrap, services || (cats.firstElementChild ? cats.firstElementChild.nextSibling : null));
         } else gauche.insertBefore(wrap, gauche.firstChild);
