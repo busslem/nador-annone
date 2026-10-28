@@ -134,7 +134,7 @@ const traductions = {
 Object.assign(traductions.fr, {
     tagline: "Votre portail des services, annonces, publicités et opportunités à Nador et sa région",
     btn_login: "👤 Se Connecter", btn_publier_top: "➕ Publier", btn_admin: "🔧 Admin", btn_logout: "Déconnexion",
-    btn_rechercher: "🔍 Rechercher", placeholder_recherche: "Rechercher une annonce (titre, description, ville, catégorie)...",
+    btn_rechercher: "Rechercher", placeholder_recherche: "Rechercher une annonce (titre, description, ville, catégorie)...",
     bonjour: "Bonjour", voir_plus: "Voir plus", prix_non_specifie: "Prix non spécifié", devise: "DH", pas_image: "Pas d'image",
     prem_titre: "⭐ Annonces Premium", autres_annonces: "Autres annonces",
     aucune_annonce: "Aucune annonce pour le moment.", aucune_categorie: "Aucune annonce dans cette catégorie.", aucun_resultat: "Aucun résultat pour « {q} ».",
@@ -149,7 +149,7 @@ Object.assign(traductions.fr, {
 Object.assign(traductions.en, {
     tagline: "Your gateway to services, classified ads, advertising and opportunities in Nador and the region",
     btn_login: "👤 Log in", btn_publier_top: "➕ Post", btn_admin: "🔧 Admin", btn_logout: "Log out",
-    btn_rechercher: "🔍 Search", placeholder_recherche: "Search an ad (title, description, city, category)...",
+    btn_rechercher: "Search", placeholder_recherche: "Search an ad (title, description, city, category)...",
     bonjour: "Hello", voir_plus: "See more", prix_non_specifie: "Price not specified", devise: "DH", pas_image: "No image",
     prem_titre: "⭐ Premium Ads", autres_annonces: "Other ads",
     aucune_annonce: "No ads yet.", aucune_categorie: "No ads in this category.", aucun_resultat: "No results for “{q}”.",
@@ -164,7 +164,7 @@ Object.assign(traductions.en, {
 Object.assign(traductions.ar, {
     tagline: "بوابتك للخدمات والإعلانات والفرص في الناظور وجهتها",
     btn_login: "👤 تسجيل الدخول", btn_publier_top: "➕ انشر", btn_admin: "🔧 المسؤول", btn_logout: "تسجيل الخروج",
-    btn_rechercher: "🔍 بحث", placeholder_recherche: "ابحث عن إعلان (العنوان، الوصف، المدينة، الفئة)...",
+    btn_rechercher: "بحث", placeholder_recherche: "ابحث عن إعلان (العنوان، الوصف، المدينة، الفئة)...",
     bonjour: "مرحبا", voir_plus: "عرض المزيد", prix_non_specifie: "السعر غير محدد", devise: "درهم", pas_image: "لا توجد صورة",
     prem_titre: "⭐ إعلانات مميزة (Premium)", autres_annonces: "إعلانات أخرى",
     aucune_annonce: "لا توجد إعلانات حاليا.", aucune_categorie: "لا توجد إعلانات في هذه الفئة.", aucun_resultat: "لا توجد نتائج عن «{q}».",
@@ -2233,6 +2233,14 @@ changerLangue(langueActuelle);
     globe.addEventListener("click", e => { e.stopPropagation(); const ouvrir = menu.hidden; menu.hidden = !ouvrir; globe.setAttribute("aria-expanded", String(ouvrir)); });
     document.addEventListener("click", e => { if (!e.target.closest("#lang-bar")) fermer(); else if (e.target.closest("#lang-menu button")) fermer(); });
     document.addEventListener("keydown", e => { if (e.key === "Escape") fermer(); });
+    /* Téléphone : un clic sur l'abréviation de la langue active ouvre/ferme la liste des langues */
+    const abbr = document.querySelector("#lang-bar .lang-abbr");
+    if (abbr) abbr.addEventListener("click", e => {
+        const b = e.target.closest("button");
+        if (!b || !b.classList.contains("actif") || !window.matchMedia("(max-width: 600px)").matches) return;
+        e.stopPropagation();
+        const ouvrir = menu.hidden; menu.hidden = !ouvrir; globe.setAttribute("aria-expanded", String(ouvrir));
+    }, true);
     const _prec = changerLangue;
     changerLangue = function (l) { _prec(l); marquer(); };
     marquer();
@@ -2405,4 +2413,14 @@ function ouvrirTexte(cle) {
     });
     titrer();
     new MutationObserver(titrer).observe(bar, { childList: true, characterData: true, subtree: true });
+})();
+
+/* Téléphone : le menu ☰ se place juste sous « Toutes » ; sur grand écran il reste dans la bande du haut */
+(function () {
+    const wrap = document.getElementById("menu-site-wrap"), zone = document.getElementById("zone-menu-tel"), gauche = document.querySelector(".bande-gauche");
+    if (!wrap || !zone || !gauche) return;
+    const mq = window.matchMedia("(max-width: 600px)");
+    const placer = () => { if (mq.matches) zone.appendChild(wrap); else gauche.insertBefore(wrap, gauche.firstChild); };
+    placer();
+    if (mq.addEventListener) mq.addEventListener("change", placer); else mq.addListener(placer);
 })();

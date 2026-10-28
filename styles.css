@@ -1284,8 +1284,11 @@ html.souscat-ouvert, html.souscat-ouvert body { overflow: hidden; }
 .flash-section { height: 70px; }
 .flash-thumb { height: 50px; max-width: 70px; }
 
+/* Zone du menu ☰ sous « Toutes » (téléphone seulement) */
+.zone-menu-tel { display: none; }
+
 /* =====================================================================
-   19. TÉLÉPHONE (≤ 600 px) : en-tête complet, icônes sur une seule ligne, annonces compactes
+   19. TÉLÉPHONE (≤ 600 px) : en-tête complet, boutons sur une seule ligne, annonces compactes
    L'ordinateur et la tablette gardent l'affichage précédent.
    ===================================================================== */
 @media (max-width: 600px) {
@@ -1307,35 +1310,42 @@ html.souscat-ouvert, html.souscat-ouvert body { overflow: hidden; }
         text-shadow: 0 1px 2px rgba(4,32,56,.95), 0 0 6px rgba(4,32,56,.8), 0 0 14px rgba(4,32,56,.6);
     }
 
-    /* ---- Bande au-dessus du Flash : tout sur une ligne, boutons en icônes ---- */
-    .nouvelle-bande { padding: 6px 6px 0; gap: 5px; }
-    .bande-gauche { gap: 5px; }
-    .btn-menu { width: clamp(32px, 9vw, 40px); height: clamp(32px, 9vw, 40px); }
-    .lang-bar .lang-globe { width: clamp(28px, 8vw, 34px); height: clamp(28px, 8vw, 34px); font-size: 16px; }
-    .lang-bar .lang-abbr button { padding: 0 5px; font-size: 10px; line-height: 1.25; }
-    .nouvelle-bande .actions-bar { gap: 4px; justify-content: space-evenly; }
+    /* ---- Bande au-dessus du Flash : 🌐 + langue active, puis les 5 boutons sur une ligne ---- */
+    .nouvelle-bande { padding: 6px 5px 0; gap: 5px; align-items: flex-end; }
+    .bande-gauche { align-self: center; align-items: center; gap: 0; }
+    .lang-bar { flex-direction: row; align-items: center; gap: 3px; }
+    .lang-bar .lang-globe { width: 30px; height: 30px; font-size: 16px; }
+    .lang-abbr { flex-direction: row; }
+    .lang-bar .lang-abbr button { display: none; }                     /* Fr / En / Ar masqués… */
+    .lang-bar .lang-abbr button.actif {                                /* …sauf la langue active */
+        display: inline-flex; align-items: center; justify-content: center;
+        height: 28px; padding: 0 8px; border-radius: 14px; font-size: 12px; font-weight: 700; line-height: 1;
+    }
+    .lang-menu { top: calc(100% + 8px); }
+
+    .nouvelle-bande .actions-bar { flex: 1 1 auto; min-width: 0; gap: 3px; align-items: stretch; justify-content: stretch; }
     .nouvelle-bande .actions-bar::before { display: none; }
     .nouvelle-bande .actions-bar > button,
     .nouvelle-bande .actions-bar > .visiteurs {
-        min-height: clamp(32px, 9vw, 40px);
-        min-width: clamp(32px, 9vw, 40px);
-        padding: 0 4px;
-        font-size: 0;                 /* le texte est masqué : seule l'icône reste */
-        border-radius: 8px;
+        flex: 1 0 auto !important;
+        width: min-content;                    /* largeur du mot le plus long : les autres mots passent dessous */
+        white-space: normal !important;
+        min-height: 38px;
+        padding: 3px 4px;
+        font-size: clamp(8.5px, 2.55vw, 10.5px);
+        line-height: 1.15;
+        text-align: center;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
         justify-content: center;
     }
-    .nouvelle-bande .actions-bar > button::before { font-size: 18px; line-height: 1; }
-    #btn-login-user::before    { content: "👤"; }
-    #btn-ouvrir-depot::before  { content: "➕"; }
-    #btn-rechercher::before    { content: "🔍"; }
-    #btn-demander::before      { content: "🙋"; }
-    #btn-admin-panel::before   { content: "🔑"; }
-    #btn-logout::before        { content: "🚪"; }
-    /* Visiteurs : 👥 + nombre seulement */
-    .nouvelle-bande .actions-bar > .visiteurs { font-size: 14px; padding: 0 6px; gap: 3px; }
-    .visiteurs #txt-visites { font-size: 0; }
-    .visiteurs #txt-visites::after { content: attr(data-n); font-size: 12px; font-weight: 700; }
+    .nouvelle-bande .actions-bar > .visiteurs { flex-direction: column; }
     #label-user-connecte { display: none !important; }
+
+    /* ---- Menu ☰ : juste en dessous de « Toutes » ---- */
+    .zone-menu-tel { display: block; padding: 5px 6px 0; }
+    .zone-menu-tel .btn-menu { width: 38px; height: 34px; }
 
     /* ---- Bande Flash ---- */
     .flash-label { padding: 0 8px; font-size: 13px; }
@@ -1353,7 +1363,7 @@ html.souscat-ouvert, html.souscat-ouvert body { overflow: hidden; }
     .categorie-btn {
         position: relative;
         flex: 1 0 auto;
-        width: min-content;           /* largeur du mot le plus long : l'emoji passe au-dessus du nom */
+        width: min-content;
         flex-direction: column;
         justify-content: center;
         padding: 0.4em 0.3em;
@@ -1365,7 +1375,7 @@ html.souscat-ouvert, html.souscat-ouvert body { overflow: hidden; }
         font-size: 1em;
         box-shadow: 0 1px 3px rgba(20, 70, 140, 0.18);
     }
-    .categorie-btn .cat-arrow {       /* petite flèche dans le coin, ne prend plus de place */
+    .categorie-btn .cat-arrow {
         position: absolute; top: -5px; inset-inline-end: -3px;
         width: 15px; height: 15px; margin: 0; font-size: 8px;
     }
