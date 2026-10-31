@@ -1708,3 +1708,23 @@ html.souscat-ouvert, html.souscat-ouvert body { overflow: hidden; }
         width: 20px !important; height: 20px !important; font-size: 16px !important;
     }
 }
+/* =====================================================================
+   BANDE FLASH : bleu marine (#052a5c), mot « Flash » en pêche, texte blanc, liseré orange
+   ===================================================================== */
+.flash-section {
+    background: #052a5c;
+    color: #fff;
+    border: 0;
+    border-bottom: 3px solid #f97316;
+}
+.flash-label { background: transparent; color: #fdba74; }
+.flash-mot { background: none; -webkit-text-fill-color: #fdba74; color: #fdba74; }
+.marquee-item, .flash-texte { color: #fff; }
+.marquee-item:hover { color: #fdba74; }
+.marquee-item.flash-prioritaire .flash-texte { color: #fff; }
+
+/* INFOS PRATIQUES : bouton Actualiser à côté du titre */
+.infos-entete { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+.infos-entete .infos-titre { margin: 0; }
+.btn-actualiser-infos { padding: 6px 12px; font-size: 13px; }
+.btn-actualiser-infos.en-cours { opacity: .6; cursor: progress; }

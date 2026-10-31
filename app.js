@@ -224,6 +224,7 @@ ajoutTrad("info_humidite", "Humidité", "Humidity", "الرطوبة");
 ajoutTrad("info_vent", "Vent", "Wind", "الرياح");
 ajoutTrad("info_maj", "Mis à jour le", "Updated on", "آخر تحديث");
 ajoutTrad("info_aucune", "Aucune information enregistrée pour le moment. Consultez les sites officiels ci-dessous.", "Nothing saved yet. See the official sites below.", "لا توجد معلومات محفوظة حاليا. راجع المواقع الرسمية أدناه.");
+ajoutTrad("info_actualiser", "🔄 Actualiser", "🔄 Refresh", "🔄 تحديث");
 ajoutTrad("info_modifier", "🔄 Mettre à jour", "🔄 Update", "🔄 تحديث");
 ajoutTrad("info_sites", "Sites officiels marocains", "Official Moroccan websites", "مواقع مغربية رسمية");
 ajoutTrad("num_police", "Police", "Police", "الشرطة");
@@ -1472,7 +1473,7 @@ function afficherInfosPratiques() {
     const veut = nom => !sousCategorieActive || sousCategorieActive === nom;
     const attente = `<p class="info-attente">${esc(t("info_chargement"))}</p>`;
     const carte = (id, titre, corps) => `<div class="info-carte" id="${id}"><h3>${titre}</h3><div class="info-corps">${corps}</div></div>`;
-    zone.innerHTML = `<h2 class="infos-titre">${esc(t("info_titre"))}</h2><div class="infos-grille">` +
+    zone.innerHTML = `<div class="infos-entete"><h2 class="infos-titre">${esc(t("info_titre"))}</h2><button type="button" class="btn btn-secondary btn-actualiser-infos" onclick="actualiserInfos(true)">${esc(t("info_actualiser"))}</button></div><div class="infos-grille">` +
         (veut("Horaires de prière") ? carte("info-priere", "🕌 " + esc(t("info_priere")), attente) : "") +
         (veut("Météo") ? carte("info-meteo", "🌤️ " + esc(t("info_meteo")), attente) : "") +
         (veut("Trains") ? carte("info-trains", "🚆 " + esc(t("info_trains")), blocTexteInfo("trains")) : "") +
@@ -1481,8 +1482,40 @@ function afficherInfosPratiques() {
         (veut("Sites officiels") ? `<div class="info-carte" id="info-sites" style="grid-column:1/-1"><h3>🌐 ${esc(t("info_sites"))}</h3><div class="info-corps">${blocSites()}</div></div>` : "") + `</div>`;
     majPriere();
     majMeteo();
-    minuteurInfos = setInterval(() => { majPriere(); majMeteo(); }, 60000);   // l'heure de la « prochaine prière » et la météo se mettent à jour seules
+    let tic = 0;
+    minuteurInfos = setInterval(() => {
+        majPriere(); majMeteo();                       // l'heure de la « prochaine prière » et la météo se mettent à jour seules
+        if (++tic % 5 === 0) actualiserInfos(false);   // toutes les 5 min : trains et pharmacies de garde rechargés depuis la base
+    }, 60000);
 }
+
+/* Met à jour les cartes « Trains » et « Pharmacies de garde » sans redessiner toute la page */
+function majTextesInfos() {
+    [["trains", "info-trains"], ["pharmacies", "info-pharmacies"]].forEach(([cle, id]) => {
+        const z = document.querySelector("#" + id + " .info-corps");
+        if (z) z.innerHTML = blocTexteInfo(cle);
+    });
+}
+
+/* Actualise les infos pratiques : relit la base (trains, pharmacies), et si force=true vide aussi les caches prière/météo */
+let actualisationInfosEnCours = false;
+async function actualiserInfos(force) {
+    if (actualisationInfosEnCours || categorieActive !== "infos pratiques") return;
+    actualisationInfosEnCours = true;
+    const bouton = document.querySelector(".btn-actualiser-infos");
+    if (bouton) { bouton.disabled = true; bouton.classList.add("en-cours"); }
+    try {
+        if (force) { try { localStorage.removeItem("cachePriere"); localStorage.removeItem("cacheMeteo"); } catch (e) {} }
+        try { if (typeof sb !== "undefined" && sb) await chargerInfos(); } catch (e) { console.warn(e); }
+        majTextesInfos();
+        if (force) { await Promise.all([majPriere(), majMeteo()]); }
+    } finally {
+        actualisationInfosEnCours = false;
+        const b = document.querySelector(".btn-actualiser-infos");
+        if (b) { b.disabled = false; b.classList.remove("en-cours"); }
+    }
+}
+document.addEventListener("visibilitychange", () => { if (!document.hidden && categorieActive === "infos pratiques") actualiserInfos(false); });
 
 function sauvegarderInfos() {
     try { localStorage.setItem("infosPratiques", JSON.stringify(infosPratiques)); } catch (e) {}
@@ -2420,6 +2453,7 @@ function ouvrirTexte(cle) {
     $("btn-infos").addEventListener("click", () => {
         if (typeof detailOuvert !== "undefined" && detailOuvert) fermerPageDetail();
         choisirCategorie("infos pratiques");
+        actualiserInfos(true);
         const z = $("infos-pratiques"); if (z && !z.hidden) z.scrollIntoView({ behavior: "smooth", block: "start" });
     });
     $("btn-apropos").addEventListener("click", () => ouvrirTexte("apropos"));
